@@ -2,6 +2,7 @@
 #include <queue>
 #include <vector>
 #include <algorithm>
+#include <climits>
 
 //Data structure for each process
 struct Process {
@@ -13,14 +14,21 @@ struct Process {
 };
 
 //Function to create a new process and initialize with random values
-Process createProcess(){
+Process createProcess(uint32_t seed){
     Process process;
 
-    //Random number generator to produce non-deterministic random numbers
-    std::random_device rd;
+    //Logic to either select random or set seed.
+    uint32_t generator_seed;
+    if(seed == UINT_MAX){
+        //Random number generator to produce a seed for the number generator below
+        std::random_device rd;
+        generator_seed = rd();
+    }else{
+        generator_seed = seed;
+    }
 
     //Mersenne Twister pseudo-random generator of 32-bit numbers
-    std::mt19937 gen(rd());
+    std::mt19937 gen(generator_seed);
 
     //Float from 0 inclusive to 99 exclusive
     std::uniform_real_distribution<float> arrival(0, 99);
@@ -45,7 +53,7 @@ bool arrivaltimeSort(const Process& proc1, const Process& proc2){
 }
 
 //Function to return a queue of processes sorted by arrival time
-std::queue<Process> createProcessQueue(int numProcesses){
+std::queue<Process> createProcessQueue(int numProcesses, uint32_t seed = UINT_MAX){
 
     //Input checking
     if(numProcesses <= 0 ){
@@ -59,7 +67,7 @@ std::queue<Process> createProcessQueue(int numProcesses){
     //Logic to assign alphabetical id's to each process
     int iterator = 0;
     for(char id = 'A'; id < 'Z'; id++){
-        Process proc = createProcess();
+        Process proc = createProcess(seed);
         proc.id = id;
 
         procs.push_back(proc);
@@ -85,7 +93,11 @@ std::queue<Process> createProcessQueue(int numProcesses){
     return procsout;
 }
 
-//Depreciated 
+
+/*
+
+WARNING: Depreciated
+
 std::vector<Process> create_Processlist(int numProcesses){
 
     std::vector<Process> procs;
@@ -109,7 +121,6 @@ std::vector<Process> create_Processlist(int numProcesses){
     return procs;
 }
 
-//Depreciated 
 std::queue<Process> create_ProcessQueue(int numProcesses){
 
     std::queue<Process> procs;
@@ -130,3 +141,4 @@ std::queue<Process> create_ProcessQueue(int numProcesses){
 
     return procs;
 }
+*/

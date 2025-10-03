@@ -15,7 +15,7 @@ CXX = g++
 CXXFLAGS = -g -Wall -Wextra -std=c++17
 
 # Define Headers
-HEADERS = 
+HEADERS = $(wildcard *.h *.hpp)
 
 # Source and Objecct Files
 SRC = $(wildcard *.cpp)

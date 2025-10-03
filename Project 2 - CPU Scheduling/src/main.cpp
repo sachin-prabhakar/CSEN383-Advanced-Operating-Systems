@@ -1,20 +1,27 @@
+//Standard Libraries
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
 
+//Scheduling Algs
 #include "FCFS.h"
 #include "SJF.h"
 #include "SRT.h"
 #include "RR.h"
 #include "HPF.h"
+
+//Other Functionality
 #include "Processes.h"
 
 
 int main() {
 
     //Create a specific number of processes and get them in a queue
-    int numProcesses = 10;  
-    std::queue<Process> processors = createProcessQueue(numProcesses);
+    int numProcesses = 5;
+
+    //Optional parameter for createProcessQueue().  Remove if you want randomness.
+    uint32_t seed = 1236;
+    std::queue<Process> processors = createProcessQueue(numProcesses, seed);
 
     //Print Size of Queue
     std::cout<<"Queue size is "<<processors.size()<<std::endl;

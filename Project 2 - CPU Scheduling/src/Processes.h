@@ -14,21 +14,8 @@ struct Process {
 };
 
 //Function to create a new process and initialize with random values
-Process createProcess(uint32_t seed){
+Process createProcess(std::mt19937& gen){
     Process process;
-
-    //Logic to either select random or set seed.
-    uint32_t generator_seed;
-    if(seed == UINT_MAX){
-        //Random number generator to produce a seed for the number generator below
-        std::random_device rd;
-        generator_seed = rd();
-    }else{
-        generator_seed = seed;
-    }
-
-    //Mersenne Twister pseudo-random generator of 32-bit numbers
-    std::mt19937 gen(generator_seed);
 
     //Float from 0 inclusive to 99 exclusive
     std::uniform_real_distribution<float> arrival(0, 99);
@@ -47,6 +34,7 @@ Process createProcess(uint32_t seed){
     return process;
 }
 
+
 //Logic for sorting processes.  If true, proc1 goes before proc2
 bool arrivaltimeSort(const Process& proc1, const Process& proc2){
     return proc1.arrivalTime < proc2.arrivalTime;
@@ -56,8 +44,8 @@ bool arrivaltimeSort(const Process& proc1, const Process& proc2){
 std::queue<Process> createProcessQueue(int numProcesses, uint32_t seed = UINT_MAX){
 
     //Input checking
-    if(numProcesses <= 0 ){
-        std::cerr << "\033[31m" <<"ERROR: INVALID NUMBER OF PROCESSES.  MUST ENTER A POSITIVE NUMBER." << "\033[0m" << std::endl;
+    if(numProcesses <= 0 || numProcesses > 26){
+        std::cerr << "\033[31m" <<"ERROR: INVALID NUMBER OF PROCESSES.  MUST ENTER A POSITIVE NUMBER AND LESS THAN 27." << "\033[0m" << std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -66,8 +54,23 @@ std::queue<Process> createProcessQueue(int numProcesses, uint32_t seed = UINT_MA
 
     //Logic to assign alphabetical id's to each process
     int iterator = 0;
-    for(char id = 'A'; id < 'Z'; id++){
-        Process proc = createProcess(seed);
+
+    //Logic to either select random or set seed.
+    uint32_t generator_seed;
+    if(seed == UINT_MAX){
+        //Random number generator to produce a seed for the number generator below
+        std::random_device rd;
+        generator_seed = rd();
+    }else{
+        generator_seed = seed;
+    }
+
+    //Mersenne Twister pseudo-random generator of 32-bit numbers
+    std::mt19937 gen(generator_seed);
+
+    for(char id = 'A'; id <= 'Z'; id++){
+
+        Process proc = createProcess(gen);
         proc.id = id;
 
         procs.push_back(proc);
@@ -92,7 +95,6 @@ std::queue<Process> createProcessQueue(int numProcesses, uint32_t seed = UINT_MA
 
     return procsout;
 }
-
 
 /*
 

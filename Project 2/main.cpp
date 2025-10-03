@@ -13,7 +13,7 @@
 int main() {
 
     //Create a specific number of processes and get them in a queue
-    int numProcesses = 5;  
+    int numProcesses = 10;  
     std::queue<Process> processors = createProcessQueue(numProcesses);
 
     //Print Size of Queue
@@ -44,4 +44,3 @@ int main() {
     // }
     return 0;
 }
-

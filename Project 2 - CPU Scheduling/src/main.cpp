@@ -37,17 +37,27 @@ int main() {
         processors.pop();
     }
 
-    //loop for running each algorithm 5 times
-    // for(int iteration = 0; iteration < 5; iteration++){
+    /* Workflow for running the scheduling algorithms
 
-    //     int numProcesses = 5;  
-    //     std::queue<Process> processors = createProcessQueue(numProcesses);
+    //Run each algorithm 5 times
+    for(int iteration = 0; iteration < 5; iteration++){
+
+        //Create 10 processes.  Increase this value if CPU is idle for longer than 2 quanta.
+        int numProcesses = 10;
+        uint32_t seed = 444; 
+        std::queue<Process> processors = createProcessQueue(numProcesses, seed);
      
-    //     //loop to simulate 100 time slices
-    //     for(int timeSlice = 0; timeSlice < 100; timeSlice++){
+        //loop to simulate 100 time slices
+        for(int timeSlice = 0; timeSlice < 100; timeSlice++){
 
-    //     }
+        }
 
-    // }
+    }
+
+    
+    */
+
+    
+    
     return 0;
 }

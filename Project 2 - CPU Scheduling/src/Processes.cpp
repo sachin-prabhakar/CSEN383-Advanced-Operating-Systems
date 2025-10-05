@@ -32,7 +32,7 @@ Process createProcess(std::mt19937& gen){
     process.arrivalTime = arrival(gen);
     process.expectedRunTime = runtime(gen);
     process.priority = prio(gen);
-    
+
     return process;
 }
 
@@ -95,4 +95,11 @@ std::queue<Process> createProcessQueue(int numProcesses, uint32_t seed){
     }
 
     return procsout;
+}
+
+void Process::finish(float time) {
+	if (this->expectedRunTime > 0)	std::cout<<"something's fishy"<<std::endl;
+	this->completionTime = time;
+	this->turnaroundTime = this->completionTime-this->arrivalTime;
+	this->responseTime = this->startTime-this->arrivalTime;
 }

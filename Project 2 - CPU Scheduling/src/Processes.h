@@ -9,16 +9,38 @@
 struct Process {
 
     float arrivalTime;
-	float completionTime;
+	float completionTime = -1;
 	float expectedRunTime;
-	float initialExpectedRunTime;	// this is just to confirm wait time
+	//float initialExpectedRunTime;	// this is just to confirm wait time
     int priority;
     char id;
 
-	float startTime;
-	float turnaroundTime;
-	float responseTime;
-	float waitTime;
+	float startTime = -1;
+	float turnaroundTime = -1;
+	float responseTime = -1;
+	float waitTime = 0;
+
+    float getarrivalTime(){return arrivalTime;}
+    float getcompletionTime(){return completionTime;}
+    float getexpectedRunTime(){return expectedRunTime;}
+    //float getinitialExpectedRunTime(){return initialExpectedRunTime;}
+    int getpriority(){return priority;}
+    char getid(){return id;}
+    float getstartTime(){return startTime;}
+    float getturnaroundTime(){return turnaroundTime;}
+    float getresponseTime(){return responseTime;}
+    float getwaitTime(){return waitTime;}
+
+
+    void setcompletionTime(float x){completionTime = x;}
+    //void setinitialExpectedRunTime(float x){initialExpectedRunTime = x;}
+    void setstartTime(float x){if(startTime < 0){startTime = x;}else{exit(1);};}
+    void setturnaroundTime(float x){turnaroundTime = x;}
+    void setresponseTime(float x){responseTime = x;}
+    void setwaitTime(float x){waitTime = x;}
+  
+    //for when job actually finishes executing, calculate turnaround time, etc.
+    void finish(float time);
 };
 
 Process createProcess(std::mt19937& gen);

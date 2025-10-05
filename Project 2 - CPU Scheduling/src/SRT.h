@@ -1,9 +1,11 @@
+#pragma once
 /*
 Shortest Remaining Time
 Ethan
 */
-#pragma once
-# include "Processes.h"
+
+#include <queue>
+#include "Processes.h"
 
 
 struct Job {
@@ -33,9 +35,6 @@ struct Job {
 
 // Logic for sorting processes.  If true, proc1 goes after proc2	*double check this
 // sorted in descending order to make popping easier
-bool remainingTimeSort(const Job& job1, const Job& job2){
-    return job1.expectedRunTime > job2.expectedRunTime;
-}
+bool remainingTimeSort(const Job& job1, const Job& job2);
 
 int SRT(std::queue<Process> &processes);
-

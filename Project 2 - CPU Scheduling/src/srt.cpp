@@ -2,7 +2,6 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <iostream>
-// # include "Processes.h"
 # include "SRT.h"
 
 // constructor for when job enters ready queue
@@ -90,4 +89,10 @@ int SRT(std::queue<Process> &processes) {
 		quanta++;
 	}
 
+}
+
+// Logic for sorting processes.  If true, proc1 goes after proc2	*double check this
+// sorted in descending order to make popping easier
+bool remainingTimeSort(const Job& job1, const Job& job2){
+    return job1.expectedRunTime > job2.expectedRunTime;
 }

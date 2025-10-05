@@ -17,11 +17,20 @@ struct Process {
 Process createProcess(std::mt19937& gen){
     Process process;
 
-    //Float from 0 inclusive to 99 exclusive
-    std::uniform_real_distribution<float> arrival(0, 99);
+    //Float from 0 to 99 inclusive
+    std::uniform_real_distribution<float> arrival(0, std::nextafter(99.0f, std::numeric_limits<float>::max()));
 
-    //Float from 1 inclusive to 10 exclusive
-    std::uniform_real_distribution<float> runtime(1, 10);
+    //Float from 0.1 to 10 inclusive
+    std::uniform_real_distribution<float> runtime(0.1, std::nextafter(10.0f, std::numeric_limits<float>::max()));
+
+    /*
+    std::nextafter(XX.0f, std::numeric_limits<float>::max())
+
+    This line of code will return the next representable float value of XX in the direction of <float>::max().
+    So this line returns the next representable float value after 10.0.  This trick allows us to make the upper bound
+    of std::uniform_real_distribution inclusive.
+    
+    */
 
     //Int from 1 to 4 inclusive
     std::uniform_int_distribution<int> prio(1, 4);

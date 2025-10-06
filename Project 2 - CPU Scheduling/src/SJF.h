@@ -37,6 +37,9 @@ int SJF(std::queue<Process> processes){
         }
 
         if(!readyQueue.empty()){
+            /*
+            Bug in line below.  Top gives the most recent arrival, but we want short job.  Consider changing the overloaded < function.
+            */
             running = readyQueue.top();
             running.setstartTime(quanta);
 

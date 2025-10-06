@@ -54,7 +54,8 @@ int main() {
         uint32_t seed = 444; 
         std::queue<Process> processors = createProcessQueue(numProcesses, seed);
         
-        SJF(processors);
+        //SJF(processors);
+        RR(processors, 2);  // Test Round Robin with time quantum of 2
 
     //}
 

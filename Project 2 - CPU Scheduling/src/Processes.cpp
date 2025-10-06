@@ -4,36 +4,26 @@
 #include <vector>
 #include <algorithm>
 #include <climits>
+#include <iomanip>
 #include "Processes.h"
 
 //Function to create a new process and initialize with random values
 Process createProcess(std::mt19937& gen){
-    Process process;
+    //int from 0 to 99 inclusive
+    std::uniform_int_distribution<int> arrival(0, 99);
 
-    //Float from 0 to 99 inclusive
-    std::uniform_real_distribution<float> arrival(0, std::nextafter(99.0f, std::numeric_limits<float>::max()));
-
-    //Float from 0.1 to 10 inclusive
-    std::uniform_real_distribution<float> runtime(0.1, std::nextafter(10.0f, std::numeric_limits<float>::max()));
-
-    /*
-    std::nextafter(XX.0f, std::numeric_limits<float>::max())
-
-    This line of code will return the next representable float value of XX in the direction of <float>::max().
-    So this line returns the next representable float value after 10.0.  This trick allows us to make the upper bound
-    of std::uniform_real_distribution inclusive.
+    //int from 1 to 10 inclusive
+    std::uniform_int_distribution<int> runtime(1, 10);
     
-    */
-
-    //Int from 1 to 4 inclusive
+    //int from 1 to 4 inclusive
     std::uniform_int_distribution<int> prio(1, 4);
+    
+    //Generate Numbers
+    int arrivalTime = arrival(gen);
+    int runTime = runtime(gen);
+    int priority = prio(gen);
 
-    //Initialize variables
-    process.arrivalTime = arrival(gen);
-    process.expectedRunTime = runtime(gen);
-    process.priority = prio(gen);
-
-    return process;
+    return Process(arrivalTime,runTime,priority);
 }
 
 //Logic for sorting processes.  If true, proc1 goes before proc2
@@ -71,6 +61,7 @@ std::queue<Process> createProcessQueue(int numProcesses, uint32_t seed){
 
     for(char id = 'A'; id <= 'Z'; id++){
 
+        //Create process with random values
         Process proc = createProcess(gen);
         proc.id = id;
 
@@ -97,9 +88,53 @@ std::queue<Process> createProcessQueue(int numProcesses, uint32_t seed){
     return procsout;
 }
 
-void Process::finish(float time) {
-	if (this->expectedRunTime > 0)	std::cout<<"something's fishy"<<std::endl;
-	this->completionTime = time;
-	this->turnaroundTime = this->completionTime-this->arrivalTime;
-	this->responseTime = this->startTime-this->arrivalTime;
+void Process::printProcessData(){
+    std::cout << "\n====== Process Data ======" << std::endl;
+    std::cout <<"Arrival Time:"<<std::setw(13)<<getarrivalTime()<< std::endl <<
+                "--------------------------"<<std::endl<<
+                "Completion Time:"<<std::setw(10)<<getcompletionTime()<< std::endl <<
+                "--------------------------"<<std::endl<<
+                "Runtime:"<<std::setw(18)<<getexpectedRunTime()<< std::endl <<
+                "--------------------------"<<std::endl<<
+                "Priority:"<<std::setw(17)<<getpriority()<< std::endl <<
+                "--------------------------"<<std::endl<<
+                "id:"<<std::setw(23)<<getid()<< std::endl <<
+                "--------------------------"<<std::endl<<
+                "Start Time:"<<std::setw(15)<<getstartTime()<< std::endl <<
+                "--------------------------"<<std::endl<<
+                "TAT:"<<std::setw(22)<<getturnaroundTime()<< std::endl <<
+                "--------------------------"<<std::endl<<
+                "Response Time:"<<std::setw(12)<<getresponseTime()<< std::endl <<
+                "--------------------------"<<std::endl<<
+                "Wait Time:"<<std::setw(16)<<getwaitTime()<< std::endl<<
+                "--------------------------"<<std::endl;
+}
+
+//Function to print final results of the processes
+void printResults(std::vector<Process> finishedJobs){
+    std::cout << "\n=== Results ===" << std::endl;
+    std::cout << "Process\tArrival\tRuntime\tStart\tFinish\tTurnaround\tResponse\tWait" << std::endl;
+    std::cout << "-------\t-------\t-------\t-----\t-------\t----------\t--------\t----" << std::endl;
+    
+    int totalTurnaround = 0, totalResponse = 0, totalWait = 0;
+    for(const Process& proc : finishedJobs){
+        int turnaround = proc.completionTime - proc.arrivalTime;
+        int response = proc.startTime - proc.arrivalTime;
+        int wait = turnaround - (proc.completionTime - proc.startTime);
+        
+        totalTurnaround += turnaround;
+        totalResponse += response;
+        totalWait += wait;
+        
+        printf("%c\t%.1i\t%.1i\t%.1i\t%.1i\t%.1i\t\t%.1i\t\t%.1i\n", 
+               proc.id, proc.arrivalTime, proc.completionTime - proc.startTime, 
+               proc.startTime, proc.completionTime, turnaround, response, wait);
+    }
+    
+    if(!finishedJobs.empty()){
+        std::cout << "\nAverages:" << std::endl;
+        std::cout << "Turnaround Time: " << totalTurnaround / static_cast<double>(finishedJobs.size()) << std::endl;
+        std::cout << "Response Time: " << totalResponse / static_cast<double>(finishedJobs.size()) << std::endl;
+        std::cout << "Wait Time: " << totalWait / static_cast<double>(finishedJobs.size()) << std::endl;
+    }
 }

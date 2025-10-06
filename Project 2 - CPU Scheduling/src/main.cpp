@@ -13,12 +13,11 @@
 //Other Functionality
 #include "Processes.h"
 
-void testingQueue(){
+void testingQueue(int numProcesses){
     //Create a specific number of processes and get them in a queue
-    int numProcesses = 5;
 
     //Optional parameter for createProcessQueue().  Remove if you want randomness.
-    uint32_t seed = 1236;
+    uint32_t seed = 444;
     std::queue<Process> processors = createProcessQueue(numProcesses, seed);
 
     //Print Size of Queue
@@ -38,25 +37,26 @@ void testingQueue(){
 
 
 int main() {
+    int numProcesses = 10;
 
+    testingQueue(numProcesses);
+
+    
     /*
     Each algorithm, ran as a function, will be run 5 times.
     */
 
     //Run each algorithm 5 times
-    for(int iteration = 0; iteration < 5; iteration++){
+    //for(int iteration = 0; iteration < 5; iteration++){
 
         //Create 10 processes.  Increase this value if CPU is idle for longer than 2 quanta.
-        int numProcesses = 10;
+        
         uint32_t seed = 444; 
         std::queue<Process> processors = createProcessQueue(numProcesses, seed);
         
-        //loop to simulate 100 time slices
-        for(int timeSlice = 0; timeSlice < 100; timeSlice++){
+        SJF(processors);
 
-        }
-
-    }
+    //}
 
     
     

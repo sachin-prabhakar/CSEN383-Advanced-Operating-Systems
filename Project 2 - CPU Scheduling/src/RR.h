@@ -49,7 +49,7 @@ int RR(std::queue<Process> processes, int timeQuantum = 2){
 
         // Execute current process
         if(isRunning){
-            running.expectedRunTime -= 1.0;
+            running.expectedRunTime -= 1;
             remainingTime--;
             
             std::cout << "Executing " << running.id << " (remaining: " << running.expectedRunTime << ")" << std::endl;
@@ -85,26 +85,29 @@ int RR(std::queue<Process> processes, int timeQuantum = 2){
     std::cout << "Process\tArrival\tRuntime\tStart\tFinish\tTurnaround\tResponse\tWait" << std::endl;
     std::cout << "-------\t-------\t-------\t-----\t-------\t----------\t--------\t----" << std::endl;
     
-    float totalTurnaround = 0, totalResponse = 0, totalWait = 0;
+    int totalTurnaround = 0, totalResponse = 0, totalWait = 0;
     for(const Process& proc : finishedJobs){
-        float turnaround = proc.completionTime - proc.arrivalTime;
-        float response = proc.startTime - proc.arrivalTime;
-        float wait = turnaround - (proc.completionTime - proc.startTime);
-        
+        int arrival = static_cast<int>(std::lround(proc.arrivalTime));
+        int start = static_cast<int>(std::lround(proc.startTime));
+        int completion = static_cast<int>(std::lround(proc.completionTime));
+        int runtime = completion - start;
+        int turnaround = completion - arrival;
+        int response = start - arrival;
+        int wait = turnaround - runtime;
+
         totalTurnaround += turnaround;
         totalResponse += response;
         totalWait += wait;
-        
-        printf("%c\t%.1f\t%.1f\t%.1f\t%.1f\t%.1f\t\t%.1f\t\t%.1f\n", 
-               proc.id, proc.arrivalTime, proc.completionTime - proc.startTime, 
-               proc.startTime, proc.completionTime, turnaround, response, wait);
+
+        printf("%c\t%d\t%d\t%d\t%d\t%d\t\t%d\t\t%d\n",
+               proc.id, arrival, runtime, start, completion, turnaround, response, wait);
     }
     
     if(!finishedJobs.empty()){
         std::cout << "\nAverages:" << std::endl;
-        std::cout << "Turnaround Time: " << (totalTurnaround / finishedJobs.size()) << std::endl;
-        std::cout << "Response Time: " << (totalResponse / finishedJobs.size()) << std::endl;
-        std::cout << "Wait Time: " << (totalWait / finishedJobs.size()) << std::endl;
+        std::cout << "Turnaround Time: " << (totalTurnaround / static_cast<int>(finishedJobs.size())) << std::endl;
+        std::cout << "Response Time: " << (totalResponse / static_cast<int>(finishedJobs.size())) << std::endl;
+        std::cout << "Wait Time: " << (totalWait / static_cast<int>(finishedJobs.size())) << std::endl;
     }
 
     return 1;

@@ -8,92 +8,53 @@
 //Data structure for each process
 struct Process {
 
-    float arrivalTime;
-	float completionTime = -1;
-	float expectedRunTime;
-	//float initialExpectedRunTime;	// this is just to confirm wait time
-    int priority;
-    char id;
+    int arrivalTime = -1;       //Value obtained at Process creation
+	int completionTime = -1;    //Value obtained at Process completion
+	int expectedRunTime = -1;   //Value obtained at Process creation
+    int priority = -1;          //Value obtained at Process creation
+    char id = '\0';             //Value obtained at Process creation
 
-	float startTime = -1;
-	float turnaroundTime = -1;
-	float responseTime = -1;
-	float waitTime = 0;
+	int startTime = -1;         //Value obtained when Process starts
+	int turnaroundTime = -1;    //Value obtained at Process completion
+	int responseTime = -1;      //Value obtained at Process completion
+	int waitTime = -1;          //Value obtained at Process completion
 
-    float getarrivalTime(){return arrivalTime;}
-    float getcompletionTime(){return completionTime;}
-    float getexpectedRunTime(){return expectedRunTime;}
-    //float getinitialExpectedRunTime(){return initialExpectedRunTime;}
+    //Default constructor
+    Process() = default;
+
+    //Overloaded constructor for ProcessCreation function
+    Process(int at, int rt, int p) : arrivalTime(at), expectedRunTime(rt), priority(p){}
+
+    //Getters for every value
+    int getarrivalTime(){return arrivalTime;}
+    int getcompletionTime(){return completionTime;}
+    int getexpectedRunTime(){return expectedRunTime;}
     int getpriority(){return priority;}
     char getid(){return id;}
-    float getstartTime(){return startTime;}
-    float getturnaroundTime(){return turnaroundTime;}
-    float getresponseTime(){return responseTime;}
-    float getwaitTime(){return waitTime;}
+    int getstartTime(){return startTime;}
+    int getturnaroundTime(){return turnaroundTime;}
+    int getresponseTime(){return responseTime;}
+    int getwaitTime(){return waitTime;}
 
-
-    void setcompletionTime(float x){completionTime = x;}
-    //void setinitialExpectedRunTime(float x){initialExpectedRunTime = x;}
-    void setstartTime(float x){if(startTime < 0){startTime = x;}else{exit(1);};}
-    void setturnaroundTime(float x){turnaroundTime = x;}
-    void setresponseTime(float x){responseTime = x;}
-    void setwaitTime(float x){waitTime = x;}
+    //Setters for values that the user can modify
+    void setcompletionTime(int x){completionTime = x;}
+    void setstartTime(int x){if(startTime < 0){startTime = x;}else{exit(1);};}
+    void setturnaroundTime(int x){turnaroundTime = x;}
+    void setresponseTime(int x){responseTime = x;}
+    void setwaitTime(int x){waitTime = x;}
   
-    //for when job actually finishes executing, calculate turnaround time, etc.
-    void finish(float time);
+    //Function to print all data relevant to a process
+    void printProcessData();
+
+    //Function to print final results of the processes
+    void printResults(std::vector<Process> finishedJobs);
 };
 
-Process createProcess(std::mt19937& gen);
+//Function to create a new process and initialize with random values
+Process createProcess(std::mt19937& gen1);
+
+//Logic for sorting processes.  If true, proc1 goes before proc2
 bool arrivaltimeSort(const Process& proc1, const Process& proc2);
+
+//Function to return a queue of processes sorted by arrival time
 std::queue<Process> createProcessQueue(int numProcesses, uint32_t seed = UINT_MAX);
-
-/*
-
-WARNING: Depreciated
-
-std::vector<Process> create_Processlist(int numProcesses){
-
-    std::vector<Process> procs;
-    int iterator = 0;
-
-    for(char id = 'A'; id < 'Z'; id++){
-        Process proc = createProcess();
-        proc.id = id;
-
-        procs.push_back(proc);
-
-        iterator++;
-
-        if(iterator == numProcesses){
-            break;
-        }     
-    }
-
-    std::sort(procs.begin(), procs.end(), &arrivaltimeSort);
-
-    return procs;
-}
-
-std::queue<Process> create_ProcessQueue(int numProcesses){
-
-    std::queue<Process> procs;
-    int iterator = 0;
-
-    for(char id = 'A'; id < 'Z'; id++){
-        Process proc = createProcess();
-        proc.id = id;
-
-        procs.push(proc);
-
-        iterator++;
-
-        if(iterator == numProcesses){
-            break;
-        }     
-    }
-
-    return procs;
-}
-*/
-
-//#endif

@@ -45,9 +45,6 @@ struct Process {
   
     //Function to print all data relevant to a process
     void printProcessData();
-
-    //Function to print final results of the processes
-    void printResults(std::vector<Process> finishedJobs);
 };
 
 //Function to create a new process and initialize with random values
@@ -58,3 +55,6 @@ bool arrivaltimeSort(const Process& proc1, const Process& proc2);
 
 //Function to return a queue of processes sorted by arrival time
 std::queue<Process> createProcessQueue(int numProcesses, uint32_t seed = UINT_MAX);
+
+//Function to print final results of the processes
+void printResults(std::vector<Process> finishedJobs);

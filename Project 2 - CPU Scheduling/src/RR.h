@@ -10,7 +10,6 @@ Sachin
 #include <vector>
 #include "Processes.h"
 #include <iostream>
-#include <cmath>
 
 int RR(std::queue<Process> processes, int timeQuantum = 2){
     int quanta = 0;
@@ -80,35 +79,8 @@ int RR(std::queue<Process> processes, int timeQuantum = 2){
         }
     }
 
-    // Show results
-    std::cout << "\n=== Round Robin Results ===" << std::endl;
-    std::cout << "Process\tArrival\tRuntime\tStart\tFinish\tTurnaround\tResponse\tWait" << std::endl;
-    std::cout << "-------\t-------\t-------\t-----\t-------\t----------\t--------\t----" << std::endl;
-    
-    int totalTurnaround = 0, totalResponse = 0, totalWait = 0;
-    for(const Process& proc : finishedJobs){
-        int arrival = static_cast<int>(std::lround(proc.arrivalTime));
-        int start = static_cast<int>(std::lround(proc.startTime));
-        int completion = static_cast<int>(std::lround(proc.completionTime));
-        int runtime = completion - start;
-        int turnaround = completion - arrival;
-        int response = start - arrival;
-        int wait = turnaround - runtime;
-
-        totalTurnaround += turnaround;
-        totalResponse += response;
-        totalWait += wait;
-
-        printf("%c\t%d\t%d\t%d\t%d\t%d\t\t%d\t\t%d\n",
-               proc.id, arrival, runtime, start, completion, turnaround, response, wait);
-    }
-    
-    if(!finishedJobs.empty()){
-        std::cout << "\nAverages:" << std::endl;
-        std::cout << "Turnaround Time: " << (totalTurnaround / static_cast<int>(finishedJobs.size())) << std::endl;
-        std::cout << "Response Time: " << (totalResponse / static_cast<int>(finishedJobs.size())) << std::endl;
-        std::cout << "Wait Time: " << (totalWait / static_cast<int>(finishedJobs.size())) << std::endl;
-    }
+    // Show results using shared utility
+    printResults(finishedJobs);
 
     return 1;
 }

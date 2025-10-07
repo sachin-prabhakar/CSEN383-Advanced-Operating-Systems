@@ -27,8 +27,8 @@ void testingQueue(int numProcesses){
     while(!processors.empty()){
         Process proc1 = processors.front();
         printf("------------------------------------\n");
-        printf("Arrival time %f\n", proc1.arrivalTime);
-        printf("Run time %f\n", proc1.expectedRunTime);
+        printf("Arrival time %d\n", proc1.arrivalTime);
+        printf("Run time %d\n", proc1.expectedRunTime);
         printf("Priority %d\n", proc1.priority);
         printf("ID %c\n\n", proc1.id);
         processors.pop();
@@ -54,8 +54,9 @@ int main() {
         uint32_t seed = 444; 
         std::queue<Process> processors = createProcessQueue(numProcesses, seed);
         
+        FCFS(processors);
         //SJF(processors);
-        RR(processors, 2);  // Test Round Robin with time quantum of 2
+        //RR(processors, 2);  // Test Round Robin with time quantum of 2
 
     //}
 

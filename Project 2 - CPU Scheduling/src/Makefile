@@ -17,7 +17,7 @@ CXXFLAGS = -g -Wall -Wextra -std=c++17
 # Define Headers
 HEADERS = $(wildcard *.h *.hpp)
 
-# Source and Objecct Files
+# Source and Object Files
 SRC = $(wildcard *.cpp)
 OBJ = $(SRC:.cpp=.o)
 TARGET = $(NAME)

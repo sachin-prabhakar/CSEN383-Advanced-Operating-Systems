@@ -113,8 +113,8 @@ void Process::printProcessData(){
 //Function to print final results of the processes
 void printResults(std::vector<Process> finishedJobs){
     std::cout << "\n=== Results ===" << std::endl;
-    std::cout << "Process\tArrival\tRuntime\tStart\tFinish\tTurnaround\tResponse\tWait" << std::endl;
-    std::cout << "-------\t-------\t-------\t-----\t-------\t----------\t--------\t----" << std::endl;
+    std::cout << "Process\tArrival\tRuntime\tPriority\tStart\tFinish\tTurnaround\tResponse\tWait" << std::endl;
+    std::cout << "-------\t-------\t-------\t--------\t-----\t------\t----------\t--------\t----" << std::endl;
     
     int totalTurnaround = 0, totalResponse = 0, totalWait = 0;
     for(const Process& proc : finishedJobs){
@@ -126,8 +126,8 @@ void printResults(std::vector<Process> finishedJobs){
         totalResponse += response;
         totalWait += wait;
         
-        printf("%c\t%.1i\t%.1i\t%.1i\t%.1i\t%.1i\t\t%.1i\t\t%.1i\n", 
-               proc.id, proc.arrivalTime, proc.completionTime - proc.startTime, 
+        printf("%c\t%.1i\t%.1i\t%.1i\t\t%.1i\t%.1i\t%.1i\t\t%.1i\t\t%.1i\n", 
+               proc.id, proc.arrivalTime, proc.completionTime - proc.startTime, proc.priority, 
                proc.startTime, proc.completionTime, turnaround, response, wait);
     }
     

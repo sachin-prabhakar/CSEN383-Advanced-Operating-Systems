@@ -5,65 +5,78 @@
 #include <iostream>
 #include <cmath>
 /*
-Shortest Job First
-
-Liam
-
+Shortest Job First - Liam
 */
 
+//Used for sorting in decending order
 bool operator<(const Process& a, const Process& b){
-    return a.arrivalTime < b.arrivalTime;
+    return a.expectedRunTime > b.expectedRunTime;
+}
+
+//Function to check to see if any processes have arrived, and if they have they are added to the ready queue
+void checkForArrivingProcesses(std::queue<Process> &p, int &q, std::priority_queue<Process> &rq){
+    while(!p.empty() && p.front().arrivalTime <= q && q < 99){
+        Process temp = p.front();
+        rq.push(temp);
+        p.pop();
+        std::cout<<"\e[1;32m"<<"Process "<<temp.id<<" added to ready queue"<<"\e[0m"<<std::endl;
+        //std::cout<<"\e[1;32m"<<"Process "<<temp.id<<" added to ready queue at "<<q<<"\e[0m"<<std::endl;
+    }
 }
 
 int SJF(std::queue<Process> processes){
     int quanta = 0;
-    //int numprocs = processes.size();
     std::priority_queue<Process> readyQueue;
 	std::vector<Process> finishedJobs;
     Process running;
 
-
-
-    //while(!processes.empty() && finishedJobs.size() != numprocs){
     while(true){
+        //Update ready queue if needed
+        checkForArrivingProcesses(processes, quanta, readyQueue);
 
-        std::cout<<"Time Slice: "<<quanta<<std::endl;
-        
-        while(!processes.empty() && processes.front().arrivalTime < quanta && quanta < 99){
-            std::cout<<"Adding a process to the ready queue at time "<<quanta<<std::endl;
-            readyQueue.push(processes.front());
-            processes.pop();
+        //Start of next quanta
+        std::cout<<"\e[1;37m"<<"Time Slice: "<<quanta<<"\e[0m";
 
-        }
-
-        if(!readyQueue.empty()){
-            /*
-            Bug in line below.  Top gives the most recent arrival, but we want short job.  Consider changing the overloaded < function.
-            */
+        //If there is a process ready to be run and time quanta hasn't passed 99 run a process
+        if(!readyQueue.empty() && quanta <= 99){
+            std::cout<<"\e[1;32m"<<"\tCPU Available"<<"\e[0m"<<std::endl;
+            //Get process with shortest runtime
             running = readyQueue.top();
+
+            //Remove that process from ready queue
+            readyQueue.pop();
+
+            //Save start time of process
             running.setstartTime(quanta);
 
-            std::cout<<"Now running process: "<<running.id<<" at time "<<quanta<<std::endl;
-            std::cout<<"Expected finish time is "<<quanta + running.getexpectedRunTime()<<std::endl;
-            float finishtime = quanta + running.getexpectedRunTime();
-            while(quanta < finishtime){
-                quanta = quanta + 1;
-            }
+            int finishtime = quanta + running.getexpectedRunTime();
 
-            readyQueue.pop();
+            //std::cout<<"\e[1;34m"<<"\nProcess "<<running.id<<" executing at time "<<quanta<<".  Expected finish time is "<<finishtime<<"\e[0m"<<std::endl;
+            
+            //Run the process until it finishes
+            while(quanta < finishtime){
+                //std::cout<<"\e[34m"<<"Process: "<<running.id<<" executing: time "<<quanta<<"\e[0m"<<std::endl;
+                std::cout<<"\e[1;37m"<<"Time Slice: "<<quanta<< "\e[1;33m"<<"\tCPU Running "<<"\e[1;34m"<<"Executing process: "<<running.id<<"\e[0m"<<std::endl;
+                quanta = quanta + 1;  
+                //Update ready queue if needed
+                checkForArrivingProcesses(processes, quanta, readyQueue);
+            }
+          
+            //Clean up running process
             running.setcompletionTime(quanta);
             finishedJobs.push_back(running);
-            std::cout<<"Process: "<<running.id<<" finished at time "<<quanta<<", runtime was "<<quanta-running.getstartTime()<<std::endl;
-            
-            
+            std::cout<<"\e[1;32m"<<"Process "<<running.id<<" finished executing "<<"\e[0m"<<std::endl;
+            //std::cout<<"\e[1;32m"<<"Process "<<running.id<<" finished at time "<<quanta<<", runtime was "<<quanta-running.getstartTime()<<"\e[0m"<<std::endl;
         }else{
-            if(quanta > 99 ){
+            //No processess to run and time quanta passed 99 so break.
+            if(quanta > 99){
+                std::cout<<"\e[1;37m"<<"\t Scheduling Finished"<<"\e[0m"<<std::endl;
+                printResults(finishedJobs);
                 break;
             }
-
-            quanta = quanta + 1;
-        }
-        
-    }
+            std::cout<<"\e[1;31m"<<"\tCPU Idle"<<"\e[0m"<<std::endl;
+            quanta = quanta + 1;     
+            }
+    } //End while loop
     return 1;
 }

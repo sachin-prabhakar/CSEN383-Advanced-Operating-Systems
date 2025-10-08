@@ -1,10 +1,5 @@
 #pragma once
-/*
-First Come First Serve
+#include <queue>
+#include "Processes.h"
 
-Kavya
-
-*/
-
-
-
+int FCFS(std::queue<Process> processes);

@@ -43,6 +43,9 @@ int main() {
 
     /*
     Each algorithm, ran as a function, will be run 5 times.
+
+    We need to implement calculating the averages across the 5 runs, not just individually.
+    We also need to calculate throughput.
     */
     //for(int iteration = 0; iteration < 5; iteration++){
 

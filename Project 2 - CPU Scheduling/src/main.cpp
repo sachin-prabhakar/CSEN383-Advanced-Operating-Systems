@@ -37,30 +37,23 @@ void testingQueue(int numProcesses){
 
 
 int main() {
-    int numProcesses = 10;
 
-    testingQueue(numProcesses);
+    //Number of processes to be created for the scheduling algorithms.  Increase this value if CPU is idle for longer than 2 quanta.
+    int numProcesses = 15;
 
-    
     /*
     Each algorithm, ran as a function, will be run 5 times.
     */
-
-    //Run each algorithm 5 times
     //for(int iteration = 0; iteration < 5; iteration++){
 
-        //Create 10 processes.  Increase this value if CPU is idle for longer than 2 quanta.
-        
+        //Generate random processes
         uint32_t seed = 444; 
         std::queue<Process> processors = createProcessQueue(numProcesses, seed);
         
-        FCFS(processors);
-        //SJF(processors);
+        //FCFS(processors);
         //RR(processors, 2);  // Test Round Robin with time quantum of 2
-
+        SJF(processors);
     //}
 
-    
-    
     return 0;
 }

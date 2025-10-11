@@ -20,11 +20,10 @@ void checkForArrivingProcesses(std::queue<Process> &p, int &q, std::priority_que
         rq.push(temp);
         p.pop();
         std::cout<<"\e[1;32m"<<"Process "<<temp.id<<" added to ready queue"<<"\e[0m"<<std::endl;
-        //std::cout<<"\e[1;32m"<<"Process "<<temp.id<<" added to ready queue at "<<q<<"\e[0m"<<std::endl;
     }
 }
 
-int SJF(std::queue<Process> processes){
+std::vector<Process> SJF(std::queue<Process> processes){
     int quanta = 0;
     std::priority_queue<Process> readyQueue;
 	std::vector<Process> finishedJobs;
@@ -51,11 +50,8 @@ int SJF(std::queue<Process> processes){
 
             int finishtime = quanta + running.getexpectedRunTime();
 
-            //std::cout<<"\e[1;34m"<<"\nProcess "<<running.id<<" executing at time "<<quanta<<".  Expected finish time is "<<finishtime<<"\e[0m"<<std::endl;
-            
             //Run the process until it finishes
             while(quanta < finishtime){
-                //std::cout<<"\e[34m"<<"Process: "<<running.id<<" executing: time "<<quanta<<"\e[0m"<<std::endl;
                 std::cout<<"\e[1;37m"<<"Time Slice: "<<quanta<< "\e[1;33m"<<"\tCPU Running "<<"\e[1;34m"<<"Executing process: "<<running.id<<"\e[0m"<<std::endl;
                 quanta = quanta + 1;  
                 //Update ready queue if needed
@@ -66,7 +62,6 @@ int SJF(std::queue<Process> processes){
             running.setcompletionTime(quanta);
             finishedJobs.push_back(running);
             std::cout<<"\e[1;32m"<<"Process "<<running.id<<" finished executing "<<"\e[0m"<<std::endl;
-            //std::cout<<"\e[1;32m"<<"Process "<<running.id<<" finished at time "<<quanta<<", runtime was "<<quanta-running.getstartTime()<<"\e[0m"<<std::endl;
         }else{
             //No processess to run and time quanta passed 99 so break.
             if(quanta > 99){
@@ -78,5 +73,6 @@ int SJF(std::queue<Process> processes){
             quanta = quanta + 1;     
             }
     } //End while loop
-    return 1;
+
+    return finishedJobs;
 }

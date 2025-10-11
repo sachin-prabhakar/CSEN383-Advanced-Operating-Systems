@@ -55,8 +55,8 @@ int main() {
         
         //FCFS(processors);
         //RR(processors, 2);  // Test Round Robin with time quantum of 2
-        SJF(processors);
     //}
+    simulateScheduling(&SJF);
 
     return 0;
 }

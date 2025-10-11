@@ -136,5 +136,45 @@ void printResults(std::vector<Process> finishedJobs){
         std::cout << "Turnaround Time: " << totalTurnaround / static_cast<double>(finishedJobs.size()) << std::endl;
         std::cout << "Response Time: " << totalResponse / static_cast<double>(finishedJobs.size()) << std::endl;
         std::cout << "Wait Time: " << totalWait / static_cast<double>(finishedJobs.size()) << std::endl;
+        std::cout << "Throughput: " << finishedJobs.size() / static_cast<double>(finishedJobs.back().completionTime) << std::endl;
+    }
+}
+void simulateScheduling(std::vector<Process> (*fun)(std::queue<Process>),int procs){
+
+    std::vector<Process> completedJobs;
+    std::vector<Process> tempJobs;
+    int totalRunTime = 0;
+    int totalProcsCompleted = 0;
+
+    for(int i=0; i<5; i++){
+        std::queue<Process> processors = createProcessQueue(procs);
+
+        tempJobs = fun(processors);
+
+        totalRunTime = totalRunTime + tempJobs.back().completionTime;
+        totalProcsCompleted = tempJobs.size();
+
+        completedJobs.insert(completedJobs.end(),tempJobs.begin(),tempJobs.end());
+    }
+
+    std::cout << "\n=== Results ===" << std::endl;
+   
+    int totalTurnaround = 0, totalResponse = 0, totalWait = 0;
+    for(const Process& proc : completedJobs){
+        int turnaround = proc.completionTime - proc.arrivalTime;
+        int response = proc.startTime - proc.arrivalTime;
+        int wait = turnaround - (proc.completionTime - proc.startTime);
+        
+        totalTurnaround += turnaround;
+        totalResponse += response;
+        totalWait += wait;   
+    }
+    
+    if(!completedJobs.empty()){
+        std::cout << "\nAverages:" << std::endl;
+        std::cout << "Turnaround Time: " << totalTurnaround / static_cast<double>(completedJobs.size()) << std::endl;
+        std::cout << "Response Time: " << totalResponse / static_cast<double>(completedJobs.size()) << std::endl;
+        std::cout << "Wait Time: " << totalWait / static_cast<double>(completedJobs.size()) << std::endl;
+        std::cout << "Throughput: " << totalProcsCompleted / static_cast<double>(totalRunTime) << std::endl;
     }
 }

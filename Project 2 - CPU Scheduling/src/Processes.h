@@ -58,3 +58,6 @@ std::queue<Process> createProcessQueue(int numProcesses, uint32_t seed = UINT_MA
 
 //Function to print final results of the processes
 void printResults(std::vector<Process> finishedJobs);
+
+//Function to run process N times and calculate averages
+void simulateScheduling(std::vector<Process> (*fun)(std::queue<Process>), int procs = 15);

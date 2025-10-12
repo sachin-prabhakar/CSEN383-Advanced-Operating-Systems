@@ -36,7 +36,7 @@ void testingQueue(int numProcesses){
 }
 
 
-int main() {
+int main(int argc, char *argv[]) {
 
     //Number of processes to be created for the scheduling algorithms.  Increase this value if CPU is idle for longer than 2 quanta.
     int numProcesses = 15;
@@ -55,6 +55,8 @@ int main() {
         
         //FCFS(processors);
         //RR(processors, 2);  // Test Round Robin with time quantum of 2
+        // SJF(processors);
+        // SRT(processors);
     //}
     simulateScheduling(&SJF);
 

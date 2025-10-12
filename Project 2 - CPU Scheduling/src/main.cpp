@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <string>
 
 //Scheduling Algs
 #include "FCFS.h"
@@ -38,8 +39,15 @@ void testingQueue(int numProcesses){
 
 int main(int argc, char *argv[]) {
 
+    if (argc > 3 || argc < 2) {
+        std::cout<<"USAGE: ./main <algorithm> [numprocesses]"<<std::endl;
+        return 1;
+    }
     //Number of processes to be created for the scheduling algorithms.  Increase this value if CPU is idle for longer than 2 quanta.
-    int numProcesses = 15;
+    int numProcesses = argc == 3 ? std::stoi(argv[2]) : 15;
+    std::string alg = argv[1];
+
+    std::cout<<"alg = "<<alg<<"\nnumprocs = "<<numProcesses<<std::endl;
 
     /*
     Each algorithm, ran as a function, will be run 5 times.
@@ -56,9 +64,21 @@ int main(int argc, char *argv[]) {
         //FCFS(processors);
         //RR(processors, 2);  // Test Round Robin with time quantum of 2
         // SJF(processors);
-        // SRT(processors);
+        SRT(processors);
+
+        if (alg == "fcfs")      FCFS(processors);
+        else if (alg == "rr")   RR(processors, 2);
+        else if (alg == "sjf")  SJF(processors);
+        else if (alg == "srt")  SRT(processors);
+        else {
+            std::cout<<"please try again; unreadable alg"<<std::endl;
+            return 1;
+        }
+
+
     //}
-    simulateScheduling(&SJF);
+    
+    // simulateScheduling(&SJF);
 
     return 0;
 }

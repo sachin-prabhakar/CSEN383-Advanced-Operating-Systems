@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
         //FCFS(processors);
         //RR(processors, 2);  // Test Round Robin with time quantum of 2
         // SJF(processors);
-        SRT(processors);
+        //SRT(processors);
 
         if (alg == "fcfs")      FCFS(processors);
         else if (alg == "rr")   RR(processors, 2);

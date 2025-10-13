@@ -38,7 +38,7 @@ struct Process {
 
     //Setters for values that the user can modify
     void setcompletionTime(int x){completionTime = x;}
-    void setstartTime(int x){if(startTime < 0){startTime = x;}else{exit(1);};}
+    void setstartTime(int x){startTime = startTime<0 ? x : -1;}
     void setturnaroundTime(int x){turnaroundTime = x;}
     void setresponseTime(int x){responseTime = x;}
     void setwaitTime(int x){waitTime = x;}

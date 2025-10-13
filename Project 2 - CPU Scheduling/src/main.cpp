@@ -47,8 +47,6 @@ int main(int argc, char *argv[]) {
     int numProcesses = argc == 3 ? std::stoi(argv[2]) : 15;
     std::string alg = argv[1];
 
-    std::cout<<"alg = "<<alg<<"\nnumprocs = "<<numProcesses<<std::endl;
-
     /*
     Each algorithm, ran as a function, will be run 5 times.
 
@@ -57,23 +55,19 @@ int main(int argc, char *argv[]) {
     */
     //for(int iteration = 0; iteration < 5; iteration++){
 
-        //Generate random processes
-        uint32_t seed = 444; 
-        std::queue<Process> processors = createProcessQueue(numProcesses, seed);
-        
-        //FCFS(processors);
-        //RR(processors, 2);  // Test Round Robin with time quantum of 2
-        // SJF(processors);
-        SRT(processors);
+    //Generate random processes
+    uint32_t seed = 444; 
+    std::queue<Process> processors = createProcessQueue(numProcesses, seed);
 
-        if (alg == "fcfs")      FCFS(processors);
-        else if (alg == "rr")   RR(processors, 2);
-        else if (alg == "sjf")  SJF(processors);
-        else if (alg == "srt")  SRT(processors);
-        else {
-            std::cout<<"please try again; unreadable alg"<<std::endl;
-            return 1;
-        }
+
+    if (alg == "fcfs")      FCFS(processors);
+    else if (alg == "rr")   RR(processors, 2);
+    else if (alg == "sjf")  SJF(processors);
+    else if (alg == "srt")  SRT(processors);
+    else {
+        std::cout<<"please try again; unreadable alg"<<std::endl;
+        return 1;
+    }
 
 
     //}

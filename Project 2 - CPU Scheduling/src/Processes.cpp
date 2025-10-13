@@ -64,6 +64,8 @@ std::queue<Process> createProcessQueue(int numProcesses, uint32_t seed){
         //Create process with random values
         Process proc = createProcess(gen);
         proc.id = id;
+        std::cout<<"new process "<<id<<std::endl;
+        std::cout<<"\tarrival, run: "<<proc.arrivalTime<<", "<<proc.expectedRunTime<<std::endl;
 
         procs.push_back(proc);
 

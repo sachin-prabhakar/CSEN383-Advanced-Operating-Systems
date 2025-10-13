@@ -70,6 +70,8 @@ int main(int argc, char *argv[]) {
         else if (alg == "rr")   RR(processors, 2);
         else if (alg == "sjf")  SJF(processors);
         else if (alg == "srt")  SRT(processors);
+        else if (alg == "hpfp")  HPF_preemptive(processors);
+
         else {
             std::cout<<"please try again; unreadable alg"<<std::endl;
             return 1;

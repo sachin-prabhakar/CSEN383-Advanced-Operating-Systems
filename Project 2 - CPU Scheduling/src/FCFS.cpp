@@ -58,7 +58,6 @@ int FCFS(std::queue<Process> processes) {
 
     // Show results using shared utility
     completeJobs(finishedJobs);
-    setNonPreemptiveWaits(finishedJobs);
     printResults(finishedJobs);
     return 1;
 }

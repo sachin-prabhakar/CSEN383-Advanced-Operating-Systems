@@ -43,7 +43,6 @@ int SRT(std::queue<Process> &processes) {
             std::cout<<"Something's wrong"<<std::endl;
             return 1;
         }
-        printTimeSlice(quanta, ready);
 
         // std::cout<<"quantum="<<quanta<<std::endl;
         // std::cout<<"\tprocesses: ";
@@ -63,6 +62,7 @@ int SRT(std::queue<Process> &processes) {
         // problem: if a new job arrives with the same remaining time as the current job, it might preempt the already running one
         if (!ready.empty()) {
             std::sort(ready.begin(), ready.end(), &remainingTimeSort);
+            printTimeSlice(quanta, ready);
             ready.front().setstartTime(quanta);
             ready.front().expectedRunTime--;
             for (auto &it : ready) {	// jobs that are ready but not running are waiting
@@ -73,12 +73,13 @@ int SRT(std::queue<Process> &processes) {
             if (ready.front().expectedRunTime <= 0) {
                 finished.push_back(ready.front());
                 ready.erase(ready.begin());
-                finished.back().completionTime = quanta;
-                finished.back().completeProcessData();
+                finished.back().completionTime = quanta+1;
             }
         }
+        else printTimeSlice(quanta, ready);
 		quanta++;
     }
+    completeJobs(finished);
     printResults(finished);
     return 0;
 }

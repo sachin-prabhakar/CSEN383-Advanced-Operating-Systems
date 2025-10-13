@@ -152,7 +152,8 @@ void Process::completeProcessData() {   // set response and TAT
     }
     responseTime = startTime - arrivalTime;
     turnaroundTime = completionTime - arrivalTime;
-    // std::cout<<id<<" "<<arrivalTime<<" "<<startTime<<" "<<completionTime<<std::endl;
+    waitTime = turnaroundTime - runtime;
+    std::cout<<id<<" "<<arrivalTime<<" "<<startTime<<" "<<completionTime<<" "<<expectedRunTime<<std::endl;
 }
 
 void completeJobs(std::vector<Process> &finished) {

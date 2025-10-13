@@ -67,7 +67,6 @@ std::vector<Process> SJF(std::queue<Process> processes){
             if(quanta > 99){
                 std::cout<<"\e[1;37m"<<"\t Scheduling Finished"<<"\e[0m"<<std::endl;
                 completeJobs(finishedJobs);
-                setNonPreemptiveWaits(finishedJobs);
                 printResults(finishedJobs);
                 break;
             }

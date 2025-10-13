@@ -49,15 +49,7 @@ int RR(std::queue<Process> processes, int timeQuantum) {
             if(running.expectedRunTime <= 0){
                 running.setcompletionTime(quanta + 1);
                 
-                // Calculate metrics
-                int turnaround = running.completionTime - running.arrivalTime;
-                int response = running.startTime - running.arrivalTime;
-                int wait = turnaround - (running.completionTime - running.startTime);
-                
-                running.setturnaroundTime(turnaround);
-                running.setresponseTime(response);
-                running.setwaitTime(wait);
-                
+                running.completeProcessData();
                 finishedJobs.push_back(running);
                 std::cout << "Process " << running.id << " finished at time " << (quanta + 1) << std::endl;
                 isRunning = false;

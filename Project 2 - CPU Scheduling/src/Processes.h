@@ -10,20 +10,21 @@ struct Process {
 
     int arrivalTime = -1;       //Value obtained at Process creation
 	int completionTime = -1;    //Value obtained at Process completion
-	int expectedRunTime = -1;   //Value obtained at Process creation
+	int expectedRunTime = -1;   //Value obtained at Process creation; incremented over time
     int priority = -1;          //Value obtained at Process creation
     char id = '\0';             //Value obtained at Process creation
 
 	int startTime = -1;         //Value obtained when Process starts
-	int turnaroundTime = -1;    //Value obtained at Process completion
-	int responseTime = -1;      //Value obtained at Process completion
-	int waitTime = -1;          //Value obtained at Process completion
+	int turnaroundTime = -1;    //Value obtained at Process completion (completion - arrival time)
+	int responseTime = -1;      //Value obtained at Process completion (start - arrival time)
+	int waitTime = 0;           //Value obtained at Process completion (time in ready queue but not running)
+    int runtime = 0;            //obtained at Process creation; same as expectedRunTime, but doesn't change
 
     //Default constructor
     Process() = default;
 
     //Overloaded constructor for ProcessCreation function
-    Process(int at, int rt, int p) : arrivalTime(at), expectedRunTime(rt), priority(p){}
+    Process(int at, int rt, int p) : arrivalTime(at), expectedRunTime(rt), priority(p), runtime(rt){}
 
     //Getters for every value
     int getarrivalTime(){return arrivalTime;}
@@ -35,13 +36,15 @@ struct Process {
     int getturnaroundTime(){return turnaroundTime;}
     int getresponseTime(){return responseTime;}
     int getwaitTime(){return waitTime;}
+    // int remainingRuntime() const {return runtime-expectedRunTime;}
 
     //Setters for values that the user can modify
     void setcompletionTime(int x){completionTime = x;}
-    void setstartTime(int x){startTime = startTime<0 ? x : -1;}
+    void setstartTime(int x){startTime = startTime<0 ? x : startTime;};
     void setturnaroundTime(int x){turnaroundTime = x;}
     void setresponseTime(int x){responseTime = x;}
-    void setwaitTime(int x){waitTime = x;}
+    void setwaitTimeNonPreemptive(){waitTime = responseTime;}
+    void completeProcessData(); // sets responseTime, TAT, and completionTime
   
     //Function to print all data relevant to a process
     void printProcessData();
@@ -61,3 +64,7 @@ void printResults(std::vector<Process> finishedJobs);
 
 //Function to run process N times and calculate averages
 void simulateScheduling(std::vector<Process> (*fun)(std::queue<Process>), int procs = 15);
+
+void completeJobs(std::vector<Process> &finished);
+
+void setNonPreemptiveWaits(std::vector<Process> &finished);

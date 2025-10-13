@@ -64,8 +64,8 @@ std::queue<Process> createProcessQueue(int numProcesses, uint32_t seed){
         //Create process with random values
         Process proc = createProcess(gen);
         proc.id = id;
-        std::cout<<"new process "<<id<<std::endl;
-        std::cout<<"\tarrival, run: "<<proc.arrivalTime<<", "<<proc.expectedRunTime<<std::endl;
+        // std::cout<<"new process "<<id<<std::endl;
+        // std::cout<<"\tarrival, run: "<<proc.arrivalTime<<", "<<proc.expectedRunTime<<std::endl;
 
         procs.push_back(proc);
 
@@ -119,18 +119,16 @@ void printResults(std::vector<Process> finishedJobs){
     std::cout << "-------\t-------\t-------\t--------\t-----\t------\t----------\t--------\t----" << std::endl;
     
     int totalTurnaround = 0, totalResponse = 0, totalWait = 0;
+
     for(const Process& proc : finishedJobs){
-        int turnaround = proc.completionTime - proc.arrivalTime;
-        int response = proc.startTime - proc.arrivalTime;
-        int wait = turnaround - (proc.completionTime - proc.startTime);
         
-        totalTurnaround += turnaround;
-        totalResponse += response;
-        totalWait += wait;
+        totalTurnaround += proc.turnaroundTime;
+        totalResponse += proc.responseTime;
+        totalWait += proc.waitTime;
         
         printf("%c\t%.1i\t%.1i\t%.1i\t\t%.1i\t%.1i\t%.1i\t\t%.1i\t\t%.1i\n", 
-               proc.id, proc.arrivalTime, proc.completionTime - proc.startTime, proc.priority, 
-               proc.startTime, proc.completionTime, turnaround, response, wait);
+               proc.id, proc.arrivalTime, proc.runtime, proc.priority, 
+               proc.startTime, proc.completionTime, proc.turnaroundTime, proc.responseTime, proc.waitTime);
     }
     
     if(!finishedJobs.empty()){
@@ -141,6 +139,36 @@ void printResults(std::vector<Process> finishedJobs){
         std::cout << "Throughput: " << finishedJobs.size() / static_cast<double>(finishedJobs.back().completionTime) << std::endl;
     }
 }
+
+
+void Process::completeProcessData() {   // set response and TAT
+    if (startTime < 0 || arrivalTime < 0 || completionTime < 0 || runtime <= 0) {
+        // some key info wasnt set for some reason
+        std::cout<<"problem in completing process "<<id<<std::endl;
+        return;
+    }
+    else if (responseTime > 0 || turnaroundTime > 0) {
+        return;
+    }
+    responseTime = startTime - arrivalTime;
+    turnaroundTime = completionTime - arrivalTime;
+    // std::cout<<id<<" "<<arrivalTime<<" "<<startTime<<" "<<completionTime<<std::endl;
+}
+
+void completeJobs(std::vector<Process> &finished) {
+    if (finished.empty()) return ;
+    for (auto &it : finished) {
+        it.completeProcessData();
+    }
+}
+
+void setNonPreemptiveWaits(std::vector<Process> &finished) {
+    if (finished.empty()) return ;
+    for (auto &it : finished) {
+        it.setwaitTimeNonPreemptive();
+    }
+}
+
 void simulateScheduling(std::vector<Process> (*fun)(std::queue<Process>),int procs){
 
     std::vector<Process> completedJobs;

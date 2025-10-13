@@ -66,11 +66,13 @@ std::vector<Process> SJF(std::queue<Process> processes){
             //No processess to run and time quanta passed 99 so break.
             if(quanta > 99){
                 std::cout<<"\e[1;37m"<<"\t Scheduling Finished"<<"\e[0m"<<std::endl;
+                completeJobs(finishedJobs);
+                setNonPreemptiveWaits(finishedJobs);
                 printResults(finishedJobs);
                 break;
             }
             std::cout<<"\e[1;31m"<<"\tCPU Idle"<<"\e[0m"<<std::endl;
-            quanta = quanta + 1;     
+            quanta = quanta + 1;
             }
     } //End while loop
 

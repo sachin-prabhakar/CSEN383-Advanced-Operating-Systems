@@ -80,6 +80,7 @@ int RR(std::queue<Process> processes, int timeQuantum = 2){
     }
 
     // Show results using shared utility
+    completeJobs(finishedJobs);
     printResults(finishedJobs);
 
     return 1;

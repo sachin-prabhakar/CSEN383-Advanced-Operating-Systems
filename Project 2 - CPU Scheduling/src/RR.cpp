@@ -1,15 +1,9 @@
-#pragma once
-/*
-Round Robin
-
-Sachin
-
-*/
-
+#include <iostream>
 #include <queue>
-#include "Processes.h"
+#include <vector>
+#include "RR.h"
 
-int RR(std::queue<Process> processes, int timeQuantum = 2){
+int RR(std::queue<Process> processes, int timeQuantum) {
     int quanta = 0;
     std::queue<Process> readyQueue;
     std::vector<Process> finishedJobs;
@@ -54,6 +48,16 @@ int RR(std::queue<Process> processes, int timeQuantum = 2){
             // Check if done or time up
             if(running.expectedRunTime <= 0){
                 running.setcompletionTime(quanta + 1);
+                
+                // Calculate metrics
+                int turnaround = running.completionTime - running.arrivalTime;
+                int response = running.startTime - running.arrivalTime;
+                int wait = turnaround - (running.completionTime - running.startTime);
+                
+                running.setturnaroundTime(turnaround);
+                running.setresponseTime(response);
+                running.setwaitTime(wait);
+                
                 finishedJobs.push_back(running);
                 std::cout << "Process " << running.id << " finished at time " << (quanta + 1) << std::endl;
                 isRunning = false;
@@ -78,7 +82,6 @@ int RR(std::queue<Process> processes, int timeQuantum = 2){
     }
 
     // Show results using shared utility
-    completeJobs(finishedJobs);
     printResults(finishedJobs);
 
     return 1;

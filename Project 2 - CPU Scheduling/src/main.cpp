@@ -55,15 +55,21 @@ int main(int argc, char *argv[]) {
     */
     //for(int iteration = 0; iteration < 5; iteration++){
 
-    //Generate random processes
-    uint32_t seed = 444; 
-    std::queue<Process> processors = createProcessQueue(numProcesses, seed);
-
+        //Generate random processes
+        uint32_t seed = 444; 
+        std::queue<Process> processors = createProcessQueue(numProcesses, seed);
+        
+        //FCFS(processors);
+        //RR(processors, 2);  // Test Round Robin with time quantum of 2
+        // SJF(processors);
+        //SRT(processors);
 
     if (alg == "fcfs")      FCFS(processors);
     else if (alg == "rr")   RR(processors, 2);
     else if (alg == "sjf")  SJF(processors);
     else if (alg == "srt")  SRT(processors);
+        else if (alg == "hpfp")  HPF_preemptive(processors);
+
     else {
         std::cout<<"please try again; unreadable alg"<<std::endl;
         return 1;

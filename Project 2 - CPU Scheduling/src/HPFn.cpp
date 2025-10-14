@@ -11,12 +11,13 @@ struct Live {
     Process p;
     int remaining;
     bool started;
+    int age = 0;
 };
 
-static inline int highest_nonempty(std::deque<int> q[4]) {
-    for (int pr = 0; pr < 4; ++pr) if (!q[pr].empty()) return pr;
-    return -1;
-}
+// static inline int highest_nonempty(std::deque<int> q[4]) {
+//     for (int pr = 0; pr < 4; ++pr) if (!q[pr].empty()) return pr;
+//     return -1;
+// }
 
 void printTimeSlice1(const int &q, const int &running, const Live &L) {
     // if (q == 0) std::cout<<"SLICE\tPROC\tPRIORITY\tREMAINING TIME"<<std::endl;
@@ -24,7 +25,7 @@ void printTimeSlice1(const int &q, const int &running, const Live &L) {
     else std::cout<<q<<"\t"<<L.p.id<<"\t"<<L.p.priority<<"\t"<<L.remaining<<std::endl;
 }
 
-std::vector<Process> HPF_nonpreemptive(std::queue<Process> processes) {
+std::vector<Process> HPF_nonpreemptive(std::queue<Process> processes, bool aging) {
     // Move input queue (sorted by arrival) into vector
     std::vector<Live> all;
     all.reserve(processes.size());
@@ -64,7 +65,7 @@ std::vector<Process> HPF_nonpreemptive(std::queue<Process> processes) {
 
     int t = 0;          // time slice
     int running = -1;   // index of current running process
-    int makespan = 0;
+    // int makespan = 0;
 
     admit(0);   // first time slice (admit any jobs that start at 0)
     std::cout<<"SLICE\tPROC\tPRIO\tREMAINING TIME"<<std::endl;
@@ -115,8 +116,30 @@ std::vector<Process> HPF_nonpreemptive(std::queue<Process> processes) {
             }
 
             L.remaining -= 1;
-            makespan = t + 1;
+            // makespan = t + 1;
             printTimeSlice1(t, running, L);
+
+            // age all live processes
+            if (aging) {
+                for (int pr = 1; pr < 4; pr++) {
+                    for (size_t i = 0; i < q[pr].size(); i++) {
+                        int idx = q[pr][i];
+                        if (idx == running) {
+                            all[idx].age = 0;
+                        }
+                        else if (all[idx].age >= 2) {
+                            all[idx].age = 0;
+                            all[idx].p.priority--;
+                            q[pr-1].push_back(idx);
+                            q[pr].erase(q[pr].begin() + i);
+                            i--;
+                        }
+                        else {
+                            all[idx].age++;
+                        }
+                    }
+                }
+            }
             if (L.remaining == 0) {
                 L.p.completionTime = t + 1;
                 L.p.turnaroundTime = L.p.completionTime - L.p.arrivalTime;
@@ -149,7 +172,22 @@ std::vector<Process> HPF_nonpreemptive(std::queue<Process> processes) {
     std::sort(finished.begin(), finished.end(),
               [](const Process& a, const Process& b){ return a.completionTime < b.completionTime; });
 
+    std::vector<Process> finishedq[4];
+    for(size_t i = 0; i < finished.size(); i++){
+        int pr = finished[i].priority;
+        finishedq[pr-1].push_back(finished[i]);
+    }
+
     // your existing printer (does per-run averages + throughput)
+    std::cout<<"OVERALL:"<<std::endl;
     printResults(finished);
+    std::cout<<"\nPRIORITY 1:"<<std::endl;
+    printResults(finishedq[0]);
+    std::cout<<"\nPRIORITY 2:"<<std::endl;
+    printResults(finishedq[1]);
+    std::cout<<"\nPRIORITY 3:"<<std::endl;
+    printResults(finishedq[2]);
+    std::cout<<"\nPRIORITY 4:"<<std::endl;
+    printResults(finishedq[3]);
     return finished;
 }

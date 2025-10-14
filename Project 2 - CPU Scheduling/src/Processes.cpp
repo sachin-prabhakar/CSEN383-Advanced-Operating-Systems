@@ -114,7 +114,7 @@ void Process::printProcessData(){
 
 //Function to print final results of the processes
 void printResults(std::vector<Process> finishedJobs){
-    std::cout << "\n=== Results ===" << std::endl;
+    std::cout << "\n========Results========" << std::endl;
     std::cout << "Process\tArrival\tRuntime\tPriority\tStart\tFinish\tTurnaround\tResponse\tWait" << std::endl;
     std::cout << "-------\t-------\t-------\t--------\t-----\t------\t----------\t--------\t----" << std::endl;
     
@@ -132,7 +132,7 @@ void printResults(std::vector<Process> finishedJobs){
     }
     
     if(!finishedJobs.empty()){
-        std::cout << "\nAverages:" << std::endl;
+        // std::cout << "\n ---- Averages ----" << std::endl;
         std::cout << "Turnaround Time: " << totalTurnaround / static_cast<double>(finishedJobs.size()) << std::endl;
         std::cout << "Response Time: " << totalResponse / static_cast<double>(finishedJobs.size()) << std::endl;
         std::cout << "Wait Time: " << totalWait / static_cast<double>(finishedJobs.size()) << std::endl;

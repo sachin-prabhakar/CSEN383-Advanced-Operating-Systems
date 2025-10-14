@@ -65,12 +65,11 @@ int main(int argc, char *argv[]) {
         //SRT(processors);
 
     if (alg == "fcfs")      FCFS(processors);
-    else if (alg == "rr")   RR(processors, 2);
+    else if (alg == "rr")   RR(processors);
     else if (alg == "sjf")  SJF(processors);
     else if (alg == "srt")  SRT(processors);
-    else if (alg == "hpfp") HPF_preemptive(processors);
-    else if (alg == "hpfn") HPF_nonpreemptive(processors);
-
+    else if (alg == "hpfp") HPF_preemptive(processors, true);
+    else if (alg == "hpfn") HPF_nonpreemptive(processors, true);
     else {
         std::cout<<"please try again; unreadable alg"<<std::endl;
         return 1;

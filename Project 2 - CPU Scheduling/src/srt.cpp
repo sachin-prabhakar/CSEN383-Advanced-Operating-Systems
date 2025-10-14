@@ -65,6 +65,7 @@ int SRT(std::queue<Process> &processes) {
             std::sort(ready.begin(), ready.end(), &remainingTimeSort);
             printTimeSlice(quanta, ready);
             ready.front().setstartTime(quanta);
+            if (ready.front().startTime > 100) break;   // jobs can't start after t=100
             ready.front().expectedRunTime--;
             for (auto &it : ready) {	// jobs that are ready but not running are waiting
                 it.waitTime++;

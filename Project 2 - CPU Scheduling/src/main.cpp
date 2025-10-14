@@ -70,9 +70,5 @@ int main(int argc, char *argv[]) {
     simulateHPF(&HPF_preemptive, true, numProcesses);
     simulateHPF(&HPF_nonpreemptive, true, numProcesses);
 
-   // simulateScheduling()
-
-    //}
-
     return 0;
 }

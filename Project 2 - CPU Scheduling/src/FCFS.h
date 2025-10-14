@@ -2,4 +2,4 @@
 #include <queue>
 #include "Processes.h"
 
-int FCFS(std::queue<Process> processes);
+std::vector<Process> FCFS(std::queue<Process> processes);

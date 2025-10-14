@@ -39,8 +39,8 @@ void testingQueue(int numProcesses){
 
 int main(int argc, char *argv[]) {
 
-    if (argc > 3 || argc < 2) {
-        std::cout<<"USAGE: ./main <algorithm> [numprocesses]"<<std::endl;
+    if (argc > 4 || argc < 2) {
+        std::cout<<"USAGE: ./main <algorithm> [numprocesses] [seed]"<<std::endl;
         return 1;
     }
     //Number of processes to be created for the scheduling algorithms.  Increase this value if CPU is idle for longer than 2 quanta.
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
     //for(int iteration = 0; iteration < 5; iteration++){
 
         //Generate random processes
-        uint32_t seed = 444; 
+        uint32_t seed = argc==4 ? (std::stoi(argv[3])<0 ? UINT32_MAX : (uint32_t)std::stoi(argv[3])) : 444; 
         std::queue<Process> processors = createProcessQueue(numProcesses, seed);
         
         //FCFS(processors);
@@ -68,7 +68,8 @@ int main(int argc, char *argv[]) {
     else if (alg == "rr")   RR(processors, 2);
     else if (alg == "sjf")  SJF(processors);
     else if (alg == "srt")  SRT(processors);
-    else if (alg == "hpfp")  HPF_preemptive(processors);
+    else if (alg == "hpfp") HPF_preemptive(processors);
+    else if (alg == "hpfn") HPF_nonpreemptive(processors);
 
     else {
         std::cout<<"please try again; unreadable alg"<<std::endl;

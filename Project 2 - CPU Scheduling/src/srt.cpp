@@ -14,6 +14,7 @@
 // }
 
 void printTimeSlice(const int &q, const std::vector<Process> &ready) {
+    if (q == 0) std::cout<<"SLICE\tPROC\tREMAINING TIME"<<std::endl;
     if (ready.empty()) std::cout<<q<<"\tWAITING"<<std::endl;
     else std::cout<<q<<"\t"<<ready.front().id<<"\t"<<ready.front().expectedRunTime<<std::endl;
 }

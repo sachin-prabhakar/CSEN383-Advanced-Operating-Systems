@@ -12,4 +12,4 @@ Ethan
 // sorted in descending order to make popping easier
 bool remainingTimeSort(const Process& job1, const Process& job2);
 
-int SRT(std::queue<Process> &processes);
+std::vector<Process> SRT(std::queue<Process> processes);

@@ -3,7 +3,7 @@
 #include <vector>
 #include "FCFS.h"
 
-int FCFS(std::queue<Process> processes) {
+std::vector<Process> FCFS(std::queue<Process> processes) {
     int quanta = 0;
     std::vector<Process> finishedJobs;
     Process running;
@@ -59,5 +59,5 @@ int FCFS(std::queue<Process> processes) {
     // Show results using shared utility
     completeJobs(finishedJobs);
     printResults(finishedJobs);
-    return 1;
+    return finishedJobs;
 }

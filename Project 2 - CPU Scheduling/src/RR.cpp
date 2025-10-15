@@ -3,13 +3,14 @@
 #include <vector>
 #include "RR.h"
 
-int RR(std::queue<Process> processes, int timeQuantum) {
+std::vector<Process> RR(std::queue<Process> processes) {
     int quanta = 0;
     std::queue<Process> readyQueue;
     std::vector<Process> finishedJobs;
     Process running;
     bool isRunning = false;
     int remainingTime = 0;
+    int timeQuantum = 1;
 
     std::cout << "\nRound Robin Scheduling (Time Quantum: " << timeQuantum << ") " << std::endl;
 
@@ -76,5 +77,5 @@ int RR(std::queue<Process> processes, int timeQuantum) {
     // Show results using shared utility
     printResults(finishedJobs);
 
-    return 1;
+    return finishedJobs;
 }

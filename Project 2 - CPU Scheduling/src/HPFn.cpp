@@ -3,6 +3,9 @@
 #include <algorithm>
 #include <iostream>
 
+// High Priority First (non-preemptive)
+
+
 // Live record to track runtime state
 struct Live {
     Process p;
@@ -16,13 +19,13 @@ struct Live {
 //     return -1;
 // }
 
-void printTimeSlice(const int &q, const int &running, const Live &L) {
+void printTimeSlice1(const int &q, const int &running, const Live &L) {
     // if (q == 0) std::cout<<"SLICE\tPROC\tPRIORITY\tREMAINING TIME"<<std::endl;
     if (running == -1) std::cout<<q<<"\tWAITING"<<std::endl;
     else std::cout<<q<<"\t"<<L.p.id<<"\t"<<L.p.priority<<"\t"<<L.remaining<<std::endl;
 }
 
-std::vector<Process> HPF_preemptive(std::queue<Process> processes, bool aging) {
+std::vector<Process> HPF_nonpreemptive(std::queue<Process> processes, bool aging) {
     // Move input queue (sorted by arrival) into vector
     std::vector<Live> all;
     all.reserve(processes.size());
@@ -114,43 +117,45 @@ std::vector<Process> HPF_preemptive(std::queue<Process> processes, bool aging) {
 
             L.remaining -= 1;
             // makespan = t + 1;
-            printTimeSlice(t, running, L);
+            printTimeSlice1(t, running, L);
+
+            // age all live processes
+            if (aging) {
+                for (int pr = 1; pr < 4; pr++) {
+                    for (size_t i = 0; i < q[pr].size(); i++) {
+                        int idx = q[pr][i];
+                        if (idx == running) {
+                            all[idx].age = 0;
+                        }
+                        else if (all[idx].age >= 2) {
+                            all[idx].age = 0;
+                            all[idx].p.priority--;
+                            q[pr-1].push_back(idx);
+                            q[pr].erase(q[pr].begin() + i);
+                            i--;
+                        }
+                        else {
+                            all[idx].age++;
+                        }
+                    }
+                }
+            }
             if (L.remaining == 0) {
                 L.p.completionTime = t + 1;
                 L.p.turnaroundTime = L.p.completionTime - L.p.arrivalTime;
                 L.p.waitTime       = L.p.turnaroundTime - L.p.expectedRunTime;
-            } else {
-                // not finished -> RR within the same priority level (q=1)
-                int pr = std::max(1,std::min(4,L.p.priority)) - 1;
-                q[pr].push_back(running);
-            }
+                running = -1;
+            } 
+            // else {
+            //     // not finished -> RR within the same priority level (q=1)
+            //     int pr = std::max(1,std::min(4,L.p.priority)) - 1;
+            //     q[pr].push_back(running);
+            //     running = -1;
+            // }
         }
 
         // advance time
         ++t;
-
-        // age all live processes
-        if (aging) {
-            for (int pr = 1; pr < 4; pr++) {
-                for (size_t i = 0; i < q[pr].size(); i++) {
-                    int idx = q[pr][i];
-                    if (idx == running) {
-                        all[idx].age = 0;
-                    }
-                    else if (all[idx].age >= 2) {
-                        all[idx].age = 0;
-                        all[idx].p.priority--;
-                        q[pr-1].push_back(idx);
-                        q[pr].erase(q[pr].begin() + i);
-                        i--;
-                    }
-                    else {
-                        all[idx].age++;
-                    }
-                }
-            }
-        }
-        running = -1;
 
         // after 99, ensure we will never first-start a new process
         if (t > 99) purge_never_started();

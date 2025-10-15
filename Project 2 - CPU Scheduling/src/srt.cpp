@@ -14,6 +14,7 @@
 // }
 
 void printTimeSlice(const int &q, const std::vector<Process> &ready) {
+    if (q == 0) std::cout<<"SLICE\tPROC\tREMAINING TIME"<<std::endl;
     if (ready.empty()) std::cout<<q<<"\tWAITING"<<std::endl;
     else std::cout<<q<<"\t"<<ready.front().id<<"\t"<<ready.front().expectedRunTime<<std::endl;
 }
@@ -33,7 +34,7 @@ void printarrivals(std::queue<Process> q) {
     std::cout<<std::endl;
 }
 
-int SRT(std::queue<Process> &processes) {
+std::vector<Process> SRT(std::queue<Process> processes) {
 	int quanta = 0;
 	std::vector<Process> ready; // ready queue
 	std::vector<Process> finished;
@@ -41,7 +42,7 @@ int SRT(std::queue<Process> &processes) {
 	while(!processes.empty() || !ready.empty()) {
 		if (quanta > 400) {
             std::cout<<"Something's wrong"<<std::endl;
-            return 1;
+            exit(EXIT_FAILURE);
         }
 
         // std::cout<<"quantum="<<quanta<<std::endl;
@@ -64,6 +65,7 @@ int SRT(std::queue<Process> &processes) {
             std::sort(ready.begin(), ready.end(), &remainingTimeSort);
             printTimeSlice(quanta, ready);
             ready.front().setstartTime(quanta);
+            if (ready.front().startTime > 100) break;   // jobs can't start after t=100
             ready.front().expectedRunTime--;
             for (auto &it : ready) {	// jobs that are ready but not running are waiting
                 it.waitTime++;
@@ -81,7 +83,7 @@ int SRT(std::queue<Process> &processes) {
     }
     completeJobs(finished);
     printResults(finished);
-    return 0;
+    return finished;
 }
 
 // Logic for sorting processes.  If true, proc1 goes after proc2	*double check this

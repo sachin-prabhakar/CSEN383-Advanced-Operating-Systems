@@ -19,7 +19,8 @@ void checkForArrivingProcesses(std::queue<Process> &p, int &q, std::priority_que
         Process temp = p.front();
         rq.push(temp);
         p.pop();
-        std::cout<<"\e[1;32m"<<"Process "<<temp.id<<" added to ready queue"<<"\e[0m"<<std::endl;
+        // std::cout<<"\e[1;32m"<<"Process "<<temp.id<<" added to ready queue"<<"\e[0m"<<std::endl;
+        std::cout<<"Process "<<temp.id<<" added to ready queue"<<std::endl;
     }
 }
 
@@ -34,11 +35,14 @@ std::vector<Process> SJF(std::queue<Process> processes){
         checkForArrivingProcesses(processes, quanta, readyQueue);
 
         //Start of next quanta
-        std::cout<<"\e[1;37m"<<"Time Slice: "<<quanta<<"\e[0m";
+        // std::cout<<"\e[1;37m"<<"Time Slice: "<<quanta<<"\e[0m";
+        std::cout<<"Time Slice: "<<quanta;
 
         //If there is a process ready to be run and time quanta hasn't passed 99 run a process
         if(!readyQueue.empty() && quanta <= 99){
-            std::cout<<"\e[1;32m"<<"\tCPU Available"<<"\e[0m"<<std::endl;
+            //std::cout<<"\e[1;32m"<<"\tCPU Available"<<"\e[0m"<<std::endl;
+            std::cout<<"\tCPU Available"<<std::endl;
+
             //Get process with shortest runtime
             running = readyQueue.top();
 
@@ -52,7 +56,9 @@ std::vector<Process> SJF(std::queue<Process> processes){
 
             //Run the process until it finishes
             while(quanta < finishtime){
-                std::cout<<"\e[1;37m"<<"Time Slice: "<<quanta<< "\e[1;33m"<<"\tCPU Running "<<"\e[1;34m"<<"Executing process: "<<running.id<<"\e[0m"<<std::endl;
+                //std::cout<<"\e[1;37m"<<"Time Slice: "<<quanta<< "\e[1;33m"<<"\tCPU Running "<<"\e[1;34m"<<"Executing process: "<<running.id<<"\e[0m"<<std::endl;
+                std::cout<<"Time Slice: "<<quanta<<"\tCPU Running "<<"Executing process: "<<running.id<<std::endl;
+
                 quanta = quanta + 1;  
                 //Update ready queue if needed
                 checkForArrivingProcesses(processes, quanta, readyQueue);
@@ -61,16 +67,22 @@ std::vector<Process> SJF(std::queue<Process> processes){
             //Clean up running process
             running.setcompletionTime(quanta);
             finishedJobs.push_back(running);
-            std::cout<<"\e[1;32m"<<"Process "<<running.id<<" finished executing "<<"\e[0m"<<std::endl;
+            //std::cout<<"\e[1;32m"<<"Process "<<running.id<<" finished executing "<<"\e[0m"<<std::endl;
+            std::cout<<"Process "<<running.id<<" finished executing "<<std::endl;
+
         }else{
             //No processess to run and time quanta passed 99 so break.
             if(quanta > 99){
-                std::cout<<"\e[1;37m"<<"\t Scheduling Finished"<<"\e[0m"<<std::endl;
+                //std::cout<<"\e[1;37m"<<"\t Scheduling Finished"<<"\e[0m"<<std::endl;
+                std::cout<<"\t Scheduling Finished"<<std::endl;
+
                 completeJobs(finishedJobs);
                 printResults(finishedJobs);
                 break;
             }
-            std::cout<<"\e[1;31m"<<"\tCPU Idle"<<"\e[0m"<<std::endl;
+            //std::cout<<"\e[1;31m"<<"\tCPU Idle"<<"\e[0m"<<std::endl;
+            std::cout<<"\tCPU Idle"<<std::endl;
+
             quanta = quanta + 1;
             }
     } //End while loop

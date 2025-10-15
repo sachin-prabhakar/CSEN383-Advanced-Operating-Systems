@@ -39,36 +39,35 @@ void testingQueue(int numProcesses){
 
 int main(int argc, char *argv[]) {
 
-    // if (argc > 4 || argc < 2) {
-    //     std::cout<<"USAGE: ./main <algorithm> [numprocesses] [seed]"<<std::endl;
-    //     return 1;
-    // }
+    if (argc > 4 || argc < 2) {
+        std::cout<<"USAGE: ./main <algorithm> [numprocesses] [seed]"<<std::endl;
+        return 1;
+    }
     //Number of processes to be created for the scheduling algorithms.  Increase this value if CPU is idle for longer than 2 quanta.
-    //int numProcesses = argc == 3 ? std::stoi(argv[2]) : 15;
-    //std::string alg = argv[1];
+    int numProcesses = argc == 3 ? std::stoi(argv[2]) : 15;
+    std::string alg = argv[1];
 
     //Generate random processes
-    //uint32_t seed = argc==4 ? (std::stoi(argv[3])<0 ? UINT32_MAX : (uint32_t)std::stoi(argv[3])) : 444; 
-    int numProcesses = 15;
-    std::queue<Process> processors = createProcessQueue(numProcesses);
+    uint32_t seed = argc==4 ? (std::stoi(argv[3])<0 ? UINT32_MAX : (uint32_t)std::stoi(argv[3])) : 444; 
+    // std::queue<Process> processors = createProcessQueue(numProcesses);
     
-    // if (alg == "fcfs")      simulateScheduling(&FCFS,numProcesses);
-    // else if (alg == "rr")   simulateScheduling(&RR,numProcesses);
-    // else if (alg == "sjf")  simulateScheduling(&SJF,numProcesses);
-    // else if (alg == "srt")  simulateScheduling(&SRT,numProcesses);
-    // else if (alg == "hpfp") simulateHPF(&HPF_preemptive, true, numProcesses);
-    // else if (alg == "hpfn") simulateHPF(&HPF_nonpreemptive, true, numProcesses);
-    // else {
-    //     std::cout<<"please try again; unreadable alg"<<std::endl;
-    //     return 1;
-    // }
+    if (alg == "fcfs")      simulateScheduling(&FCFS,numProcesses, seed);
+    else if (alg == "rr")   simulateScheduling(&RR,numProcesses, seed);
+    else if (alg == "sjf")  simulateScheduling(&SJF,numProcesses, seed);
+    else if (alg == "srt")  simulateScheduling(&SRT,numProcesses, seed);
+    else if (alg == "hpfp") simulateHPF(&HPF_preemptive, true, numProcesses, seed);
+    else if (alg == "hpfn") simulateHPF(&HPF_nonpreemptive, true, numProcesses, seed);
+    else {
+        std::cout<<"please try again; unreadable alg"<<std::endl;
+        return 1;
+    }
 
-    simulateScheduling(&FCFS,numProcesses);
-    simulateScheduling(&RR,numProcesses);
-    simulateScheduling(&SJF,numProcesses);
-    simulateScheduling(&SRT,numProcesses);
-    simulateHPF(&HPF_preemptive, true, numProcesses);
-    simulateHPF(&HPF_nonpreemptive, true, numProcesses);
+    // simulateScheduling(&FCFS,numProcesses);
+    // simulateScheduling(&RR,numProcesses);
+    // simulateScheduling(&SJF,numProcesses);
+    // simulateScheduling(&SRT,numProcesses);
+    // simulateHPF(&HPF_preemptive, true, numProcesses);
+    // simulateHPF(&HPF_nonpreemptive, true, numProcesses);
 
     return 0;
 }

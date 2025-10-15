@@ -63,10 +63,10 @@ std::queue<Process> createProcessQueue(int numProcesses, uint32_t seed = UINT_MA
 void printResults(std::vector<Process> finishedJobs);
 
 //Function to run process N times and calculate averages
-void simulateScheduling(std::vector<Process> (*fun)(std::queue<Process>), int procs);
+void simulateScheduling(std::vector<Process> (*fun)(std::queue<Process>), int procs, int seed = UINT32_MAX);
 
 //Function to run process N times and calculate averages
-void simulateHPF(std::vector<Process> (*fun)(std::queue<Process>,bool),bool age, int procs);
+void simulateHPF(std::vector<Process> (*fun)(std::queue<Process>,bool),bool age, int procs, int seed = UINT32_MAX);
 
 void completeJobs(std::vector<Process> &finished);
 

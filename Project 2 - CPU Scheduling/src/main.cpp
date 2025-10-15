@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     //Number of processes to be created for the scheduling algorithms.  Increase this value if CPU is idle for longer than 2 quanta.
-    int numProcesses = argc == 3 ? std::stoi(argv[2]) : 15;
+    int numProcesses = argc == 3 ? std::stoi(argv[2]) : 25;
     std::string alg = argv[1];
 
     //Generate random processes

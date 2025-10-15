@@ -178,7 +178,7 @@ void simulateScheduling(std::vector<Process> (*fun)(std::queue<Process>), int pr
     int totalProcsCompleted = 0;
 
     for(int i=0; i<5; i++){
-        std::queue<Process> processors = createProcessQueue(procs, seed);
+        std::queue<Process> processors = createProcessQueue(procs, seed+i);
 
         tempJobs = fun(processors);
 
@@ -220,7 +220,7 @@ void simulateHPF(std::vector<Process> (*fun)(std::queue<Process>, bool), bool ag
     int totalProcsCompleted = 0;
 
     for(int i=0; i<5; i++){
-        std::queue<Process> processors = createProcessQueue(procs, seed);
+        std::queue<Process> processors = createProcessQueue(procs, seed+i);
 
         tempJobs = fun(processors, age);
 

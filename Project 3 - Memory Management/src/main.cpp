@@ -1,11 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
-#include <string>   //std::string
-#include <array>    //std::array
-#include <queue>    //std::queue
 #include <pthread.h>
-
 #include "ticketSellers.h"  //Functions to run the threads on
 
 int main(int argc, char* argv[]){
@@ -32,39 +28,42 @@ int main(int argc, char* argv[]){
         exit(EXIT_FAILURE);
     }
 
-    //Save int N onto the heap to ensure threads have safe access to N
-    int *Nptr = new int(N);
+    //Struct defined in header file.
+    threadData *high = new threadData(N, 'H');
+    threadData *medium = new threadData(N, 'M');
+    threadData *low = new threadData(N, 'L');
 
     //Threads for each seller
-    pthread_t H1, M1, M2, M3, L1, L2, L3, L4, L5, L6;
+    pthread_t sellers[10];
 
-    //(thread, attributes for the thread, function to run, args for function)
-    pthread_create(&H1, NULL, highTickets, (void *) Nptr);
-    pthread_create(&M1, NULL, MediumTickets, (void *) Nptr);
-    pthread_create(&M2, NULL, MediumTickets, (void *) Nptr);
-    pthread_create(&M3, NULL, MediumTickets, (void *) Nptr);
-    pthread_create(&L1, NULL, LowTickets, (void *) Nptr);
-    pthread_create(&L2, NULL, LowTickets, (void *) Nptr);
-    pthread_create(&L3, NULL, LowTickets, (void *) Nptr);
-    pthread_create(&L4, NULL, LowTickets, (void *) Nptr);
-    pthread_create(&L5, NULL, LowTickets, (void *) Nptr);
-    pthread_create(&L6, NULL, LowTickets, (void *) Nptr);
+    //High Seller
+    pthread_create(&sellers[0], NULL, ticketSeller, high);
+    //Medium Seller
+    for(int s=1; s<4; s++){
+        pthread_create(&sellers[s], NULL, ticketSeller, medium);
+    }
+    //Low Seller
+    for(int s=4; s<10; s++){
+        pthread_create(&sellers[s], NULL, ticketSeller, low);
+    }
 
-    //(thread to join, return value)
-    pthread_join(H1, NULL);
-    pthread_join(M1, NULL);
-    pthread_join(M2, NULL);
-    pthread_join(M3, NULL);
-    pthread_join(L1, NULL);
-    pthread_join(L2, NULL);
-    pthread_join(L3, NULL);
-    pthread_join(L4, NULL);
-    pthread_join(L5, NULL);
-    pthread_join(L6, NULL);
+    //Wait for all threads
+    for(int i=0; i<10; i++){
+        pthread_join(sellers[i],NULL);
+    }
 
-    delete Nptr;
+    //Free memory from the heap
+    delete high;
+    delete medium;
+    delete low;
 
-    std::cout<<"Thread executing finished"<<std::endl;
+    /*
+    
+    Print Results here
+    
+    */
+
+    std::cout<<std::endl<<"Thread execution finished"<<std::endl;
 
     return 1;
 }

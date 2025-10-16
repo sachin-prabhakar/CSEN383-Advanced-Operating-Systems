@@ -1,22 +1,53 @@
 #include "ticketSellers.h"
+#include <iostream>
 
 //Mutex used to lock the datastructure
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 //Create a 10x10 array to keep track of the seats
-std::array<std::array<std::string,10>,10> seats;
+std::string seats[10][10] = {""};
 
 //Used to synchronize the 10 threads before they begin the main loop
 std::barrier sync_threads(10);
 
+static int thread_id_M = 0;
+static int thread_id_L = 0;
+
+
+void printTable(const std::string (&seat)[10][10]){
+    std::cout<<std::endl;
+    std::cout<<std::endl;
+
+    for(int row = 0; row < 10; row++){
+        for(int col = 0; col < 10; col++){
+            std::cout<<seat[row][col]<<"\t";
+        }
+        std::cout<<std::endl;
+    }
+    std::cout<<std::endl;
+    std::cout<<std::endl;
+
+}
+
+
+
 //Function for ticket seller
 void *ticketSeller(void *arg){
+   // printTable(seats);
     int trackedTime = 0;
 
     threadData *data = static_cast<threadData*>(arg);
 
     int N = data->num_customers;
     char t = data->seller_type;
+
+    int thread_M;
+    int thread_L;
+
+    if(t == 'M')
+        thread_M = thread_id_M++;
+    if(t == 'L')
+        thread_L = thread_id_L++;
 
     //Generate a random seed
     std::random_device rd;
@@ -37,18 +68,37 @@ void *ticketSeller(void *arg){
     for(int j=0; j<N; j++){
         Customers.push(arrival(gen));
     }
-
+    
     //Wait for all threads to arrive at this point before continuing.
     sync_threads.arrive_and_wait();
 
+    int customer = 0;
+    bool flag = false;
     //Loop condition for ticket sellers
-    while(!Customers.empty() || trackedTime < 60){
+    while(!Customers.empty() && trackedTime < 60){
+        
 
         if(Customers.top() <= trackedTime){
             pthread_mutex_lock(&mutex);
+             customer++;
+
 
             switch(t){
                 case 'H':
+                    for(int row = 0; row < 10; row++){
+                        for(int col = 0; col < 10; col++){
+                            if(seats[row][col] == ""){
+                                seats[row][col] = t+"1" + (customer < 10 ? "0"+ std::to_string(customer) : std::to_string(customer));
+                                flag = true;
+                                break;
+                            }
+                        }
+                        if(flag){
+                            flag = false;
+                            break;
+                        }
+                    }
+                    std::cout<<"Time: "<<trackedTime<<"Seller H serving customer"<<std::endl;
                     /*
                     Search for an empty seat depending on which type of seller this is
                     
@@ -56,6 +106,23 @@ void *ticketSeller(void *arg){
                     trackedTime = trackedTime + H_time(seed);
 
                 case 'M':
+                    for(int i=1; i<10; i++){
+                        int row= 5 + i/2 * pow(-1,i);
+                        for(int col = 0; col<10; col++){
+                            if(seats[row][col] == ""){
+                                // seats[row][col] = t+thread_M;
+                                seats[row][col] = t+std::to_string(thread_M) + (customer < 10 ? "0"+ std::to_string(customer) : std::to_string(customer));
+                                flag = true;
+                                break;
+                            }   
+                        }
+                        if(flag){
+                            flag = false;
+                            break;
+                        }
+                    }
+                    std::cout<<"Time: "<<trackedTime<<"Seller M serving customer"<<std::endl;
+
                     /*
                     Search for an empty seat depending on which type of seller this is
                     
@@ -63,17 +130,37 @@ void *ticketSeller(void *arg){
                     trackedTime = trackedTime + M_time(seed);
 
                 case 'L':
+                    for(int row = 9; row >= 0; row--){
+                        for(int col = 9; col >= 0; col--){
+                            if(seats[row][col] == ""){
+                            //    seats[row][col] = t+thread_L;
+                                seats[row][col] = t+std::to_string(thread_L) + (customer < 10 ? "0"+ std::to_string(customer) : std::to_string(customer));
+                                flag = true;
+                                break;
+                            }
+                        }
+                        if(flag){
+                            flag = false;
+                            break;
+                        }
+                    }
+                    std::cout<<"Time: "<<trackedTime<<"Seller L serving customer"<<std::endl;
+
                     /*
                     Search for an empty seat depending on which type of seller this is
                     
                     */
                     trackedTime = trackedTime + L_time(seed);
             }
+            Customers.pop();
             pthread_mutex_unlock(&mutex);
         }else{
             trackedTime = trackedTime + 1;
-        }   
+        } 
+        
     }
+    printTable(seats);
+
 
     return NULL;
 

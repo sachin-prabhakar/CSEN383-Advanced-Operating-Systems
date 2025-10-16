@@ -12,7 +12,7 @@ NAME = main
 
 # Compiler and Flags
 CXX = g++
-CXXFLAGS = -g -Wall -Wextra -std=c++23
+CXXFLAGS = -g -Wall -Wextra -std=c++23 -fsanitize=address
 
 # Define Headers
 HEADERS = $(wildcard *.h *.hpp)

@@ -19,7 +19,7 @@ struct threadData{
 extern pthread_mutex_t mutex;
 
 //Create a 10x10 array to keep track of the seats
-extern std::string seats[10][10];
+// extern std::string seats[10][10];
 
 //Function for ticket seller
 void *ticketSeller(void *arg);

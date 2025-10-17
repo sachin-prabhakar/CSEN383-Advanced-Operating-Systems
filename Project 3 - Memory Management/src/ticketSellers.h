@@ -14,14 +14,20 @@ struct threadData{
     threadData(int c, char t) : num_customers(c), seller_type(t){}
 };
 
+struct Customer{
+    int arrivalTime;
+    int processingTime;
+    std::string sellerID;
 
-//Mutex used to lock the datastructure
-extern pthread_mutex_t mutex;
+    bool operator<(const Customer &c1) const{
+        return arrivalTime > c1.arrivalTime;
+    }
 
-//Create a 10x10 array to keep track of the seats
-// extern std::string seats[10][10];
+    Customer(int a, int p, std::string id) : arrivalTime(a), processingTime(p), sellerID(id) {};
+};
 
 //Function for ticket seller
 void *ticketSeller(void *arg);
 
-void *ticketSellers1(void *arg);
+//Function to create a queue of customers for each thread
+std::priority_queue<Customer> createCustomerQueue(int c, char id);

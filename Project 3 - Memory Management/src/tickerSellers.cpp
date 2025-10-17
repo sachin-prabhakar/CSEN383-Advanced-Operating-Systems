@@ -37,8 +37,10 @@ std::barrier printTime(10,pt);
 
 //Sync 10 threads and print seating chart
 static int unservedcustomers = 0;
+static int handledcustomers = 0;
 void printTable(){
     std::cout<<unservedcustomers<<" Customers could not be served in the allotted time."<<std::endl;
+    std::cout<<handledcustomers<<" Customers were processed."<<std::endl;
     for(int row = 0; row < 10; row++){
         for(int col = 0; col < 10; col++){
             if(seats[row][col].length() == 0){
@@ -68,9 +70,7 @@ void ps(){
     }else{
         std::cout<<" No active sellers at this time"<<std::endl;;
     }
-}
-
-    
+}    
 std::barrier printSellers(10, ps);
 
 /*
@@ -113,8 +113,6 @@ std::priority_queue<Customer> createCustomerQueue(int c, char id, int num){
     }
     return Customers;
 }
-
-
 
 //Function for ticket seller
 void *ticketSeller(void *arg){
@@ -173,6 +171,7 @@ void *ticketSeller(void *arg){
                             }
                         }
                     }
+                    handledcustomers++;
                     sold.push_back(name);
                     //std::cout<<"Seller "<<name<<" serving customer\t";
                     break;
@@ -190,6 +189,7 @@ void *ticketSeller(void *arg){
                             }   
                         }
                     }
+                    handledcustomers++;
                     sold.push_back(name);
                     //std::cout<<"Seller "<<name<<" serving customer\t";
                     break;
@@ -206,6 +206,7 @@ void *ticketSeller(void *arg){
                             }
                         }
                     }
+                    handledcustomers++;
                     sold.push_back(name);
                     //std::cout<<"Seller "<<name<<" serving customer\t";
                     break;
@@ -230,9 +231,11 @@ void *ticketSeller(void *arg){
 
     }//end while
 
-    if(!Customers.empty()){
-        unservedcustomers +=Customers.size();
+    pthread_mutex_lock(&mutex);
+    if(!Customers.empty()){   
+        unservedcustomers = unservedcustomers + Customers.size();   
     }
+    pthread_mutex_unlock(&mutex);
 
     //Sync 10 threads and print seats before continuing
     printResultsTable.arrive_and_wait();

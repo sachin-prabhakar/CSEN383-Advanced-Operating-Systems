@@ -28,9 +28,9 @@ std::barrier increment(10,incrementWhile);
 //Sync 10 threads and print new time
 void pt() noexcept {
     if(timeElapsed < 10){
-        std::cout<<"Time: 0:0"<<timeElapsed<<"\t";//<<std::endl;
+        std::cout<<"Time: 0:0"<<timeElapsed;
     }else{
-        std::cout<<"Time: 0:"<<timeElapsed<<"\t";//<<std::endl;
+        std::cout<<"Time: 0:"<<timeElapsed;
     }
 }
 std::barrier printTime(10,pt);
@@ -59,14 +59,14 @@ static std::vector<std::string> sold;
 void ps(){
 
     if(sold.size() > 0 ){
-        std::cout<<"Sellers: ";
+        std::cout<<" Sellers: ";
         for(unsigned long i=0; i<sold.size();i++){
-            std::cout<<sold.at(0)<<", ";
+            std::cout<<sold.at(i)<<", ";
         }
         std::cout<<"serving customers."<<std::endl;
         sold.clear();
     }else{
-        std::cout<<"Not active sellers at this time"<<std::endl;;
+        std::cout<<" No active sellers at this time"<<std::endl;;
     }
 }
 

@@ -23,3 +23,5 @@ extern pthread_mutex_t mutex;
 
 //Function for ticket seller
 void *ticketSeller(void *arg);
+
+void *ticketSellers1(void *arg);

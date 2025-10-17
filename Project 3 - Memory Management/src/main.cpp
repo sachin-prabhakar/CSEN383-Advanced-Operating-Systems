@@ -37,14 +37,14 @@ int main(int argc, char* argv[]){
     pthread_t sellers[10];
 
     //High Seller
-    pthread_create(&sellers[0], NULL, ticketSeller, high);
+    pthread_create(&sellers[0], NULL, ticketSellers1, high);
     //Medium Seller
     for(int s=1; s<4; s++){
-        pthread_create(&sellers[s], NULL, ticketSeller, medium);
+        pthread_create(&sellers[s], NULL, ticketSellers1, medium);
     }
     //Low Seller
     for(int s=4; s<10; s++){
-        pthread_create(&sellers[s], NULL, ticketSeller, low);
+        pthread_create(&sellers[s], NULL, ticketSellers1, low);
     }
 
     //Wait for all threads

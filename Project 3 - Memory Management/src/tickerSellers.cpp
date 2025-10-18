@@ -28,9 +28,9 @@ std::barrier increment(10,incrementWhile);
 //Sync 10 threads and print new time
 void pt() noexcept {
     if(timeElapsed < 10){
-        std::cout<<"Time: 0:0"<<timeElapsed;
+        std::cout<<"0:0"<<timeElapsed<<" - ";
     }else{
-        std::cout<<"Time: 0:"<<timeElapsed;
+        std::cout<<"0:"<<timeElapsed<<" - ";
     }
 }
 std::barrier printTime(10,pt);
@@ -78,6 +78,15 @@ std::barrier printSellers(10, ps);
     === End of Barriers and Barrier Functions ===
 
 */
+
+//Function called when a seat is found
+void seatFound(int r, int c, std::string n, bool &f, std::priority_queue<Customer> &C){
+    seats[r][c] = n;
+    handledcustomers++;
+    sold.push_back(n);
+    C.pop();
+    f = true;
+}
 
 
 std::priority_queue<Customer> createCustomerQueue(int c, char id, int num){
@@ -149,72 +158,56 @@ void *ticketSeller(void *arg){
     sync_threads.arrive_and_wait();
 
     //Loop until time is up
-    while(timeElapsed < 60){
+    while(timeElapsed < 60 && handledcustomers <= 100){
 
         //Sync 10 threads and print time before continuing
         printTime.arrive_and_wait();
+        
 
-        if(!Customers.empty() && Customers.top().arrivalTime <= timeElapsed && Customers.top().processingTime == 0){
+        if(!Customers.empty() && Customers.top().processingTime == 0){
             pthread_mutex_lock(&mutex);
             //Increment number of customers that the current thread has served
             customer++;
+            bool found = false;
             switch(t){
-                case 'H':
-                {
+                case 'H':{
                     std::string name = t+std::to_string(1) + (customer < 10 ? "0"+ std::to_string(customer) : std::to_string(customer));
-                    for(int row = 0; row < 10; row++){
+                    for(int row = 0; row < 10 && !found; row++){
                         for(int col = 0; col < 10; col++){
-                            if(seats[row][col].length() == 0){
-                                seats[row][col] = name;
-                                row = 10;
+                            if(seats[row][col].empty()){
+                                seatFound(row, col, name, found, Customers);
                                 break;
                             }
                         }
                     }
-                    handledcustomers++;
-                    sold.push_back(name);
-                    //std::cout<<"Seller "<<name<<" serving customer\t";
                     break;
-                }
-                case 'M':
-                {
+                }case 'M':{
                     std::string name = t+std::to_string(thread_M) + (customer < 10 ? "0"+ std::to_string(customer) : std::to_string(customer));
-                    for(int i=1; i<10; i++){
+                    for(int i=1; i<10 && !found; i++){
                         int row= 5 + i/2 * pow(-1,i);
                         for(int col = 0; col<10; col++){
-                            if(seats[row][col].length() == 0){
-                                seats[row][col] = name;
-                                i = 10;
+                            if(seats[row][col].empty()){
+                                seatFound(row, col, name, found, Customers);
                                 break;
                             }   
                         }
                     }
-                    handledcustomers++;
-                    sold.push_back(name);
-                    //std::cout<<"Seller "<<name<<" serving customer\t";
                     break;
-                }
-                case 'L':
-                {
+                }case 'L':{
                     std::string name = t+std::to_string(thread_L) + (customer < 10 ? "0"+ std::to_string(customer) : std::to_string(customer));
-                    for(int row = 9; row >= 0; row--){
+                    for(int row = 9; row >= 0 && !found; row--){
                         for(int col = 9; col >= 0; col--){
-                            if(seats[row][col].length() == 0){
-                                seats[row][col] = name;
-                                row = -1;
+                            if(seats[row][col].empty()){
+                                seatFound(row, col, name, found, Customers);
                                 break;
                             }
                         }
-                    }
-                    handledcustomers++;
-                    sold.push_back(name);
-                    //std::cout<<"Seller "<<name<<" serving customer\t";
+                    } 
                     break;
                 }
-            }
-            Customers.pop();
+            }//end switch
             pthread_mutex_unlock(&mutex);
-        }
+        }//end if
 
         if(!Customers.empty() && Customers.top().arrivalTime <= timeElapsed && Customers.top().processingTime > 0){
             Customer temp = Customers.top();
@@ -241,5 +234,4 @@ void *ticketSeller(void *arg){
     printResultsTable.arrive_and_wait();
 
     return NULL;
-
 }

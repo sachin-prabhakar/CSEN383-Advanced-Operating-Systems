@@ -18,6 +18,7 @@ struct Customer{
     int arrivalTime;
     int processingTime;
     std::string sellerID;
+    bool helped = false;
 
     bool operator<(const Customer &c1) const{
         return arrivalTime > c1.arrivalTime;

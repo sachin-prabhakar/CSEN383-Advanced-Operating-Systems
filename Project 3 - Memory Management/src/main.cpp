@@ -57,13 +57,6 @@ int main(int argc, char* argv[]){
     delete medium;
     delete low;
 
-    /*
-    
-    Print Results here
-    
-    */
-
     std::cout<<std::endl<<"Thread execution finished"<<std::endl;
-
     return 1;
 }

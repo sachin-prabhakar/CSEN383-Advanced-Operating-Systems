@@ -92,6 +92,7 @@ void helperPrint(double rt, double tat, char t, std::vector<Customer> C){
     std::cout<<"Avg Response Time: "<<rt/size<<"\n";
     std::cout<<"Avg Turn Around Time: "<<tat/size<<"\n";
     std::cout<<"Avg Throughput: "<<static_cast<double>(size)/60<<"\n";
+    std::cout<<size<<" Customers of "<<t<<" got seats"<<"\n";
 }
 //Sync 10 threads and print out final metrics
 void printMetric(){

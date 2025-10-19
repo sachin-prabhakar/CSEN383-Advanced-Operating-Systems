@@ -25,7 +25,7 @@ struct Customer{
         return arrivalTime > c1.arrivalTime;
     }
 
-    Customer(int a, int p, std::string id) : arrivalTime(a), processingTime(p), sellerID(id), officialArrivalTime(a){};
+    Customer(int a, int p, std::string id) : arrivalTime(a), processingTime(p),  officialArrivalTime(a), sellerID(id){};
 };
 
 //Function for ticket seller

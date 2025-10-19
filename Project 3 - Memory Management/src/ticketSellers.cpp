@@ -238,7 +238,7 @@ void *ticketSeller(void *arg){
     sync_threads.arrive_and_wait();
 
     //Loop until time is up
-    while(timeElapsed < 60 || curentCustomers !=0){
+    while((timeElapsed < 60 || curentCustomers !=0) && (hSellers.size() + mSellers.size() + lSellers.size()) != 100){
 
         //Sync 10 threads and print time before continuing
         printTime.arrive_and_wait();

@@ -1,0 +1,306 @@
+0:00 -	New customer has arrived at seller L0
+	New customer has arrived at seller L4
+	Sellers: L001, L401, serving customers.
+
+0:01 -	New customer has arrived at seller L2
+	Sellers: L201, serving customers.
+
+0:02 -	New customer has arrived at seller M2
+	New customer has arrived at seller M0
+	Sellers: M201, M001, serving customers.
+
+0:03 -	No active sellers at this time
+
+0:04 -	M0 Finished ticket purchase #1
+	New customer has arrived at seller L5
+	Sellers: L501, serving customers.
+
+0:05 -	L4 Finished ticket purchase #1
+	M2 Finished ticket purchase #1
+	No active sellers at this time
+
+0:06 -	New customer has arrived at seller L3
+	Sellers: L402, L301, serving customers.
+
+0:07 -	New customer has arrived at seller M0
+	New customer has arrived at seller M0
+	New customer has arrived at seller M1
+	L0 Finished ticket purchase #1
+	Sellers: M002, M101, serving customers.
+
+0:08 -	L2 Finished ticket purchase #1
+	L5 Finished ticket purchase #1
+	Sellers: L002, serving customers.
+
+0:09 -	M0 Finished ticket purchase #2
+	Sellers: L202, serving customers.
+
+0:10 -	New customer has arrived at seller H1
+	Sellers: H101, M003, serving customers.
+
+0:11 -	H1 Finished ticket purchase #1
+	L3 Finished ticket purchase #1
+	M1 Finished ticket purchase #1
+	New customer has arrived at seller L5
+	Sellers: L502, serving customers.
+
+0:12 -	L4 Finished ticket purchase #2
+	M0 Finished ticket purchase #3
+	New customer has arrived at seller L3
+	Sellers: L302, serving customers.
+
+0:13 -	L2 Finished ticket purchase #2
+	Sellers: M004, L403, serving customers.
+
+0:14 -	New customer has arrived at seller L2
+	New customer has arrived at seller L2
+	L0 Finished ticket purchase #2
+	Sellers: L203, serving customers.
+
+0:15 -	New customer has arrived at seller M2
+	Sellers: L003, M202, serving customers.
+
+0:16 -	L3 Finished ticket purchase #2
+	No active sellers at this time
+
+0:17 -	M0 Finished ticket purchase #4
+	New customer has arrived at seller L3
+	Sellers: L303, serving customers.
+
+0:18 -	L5 Finished ticket purchase #2
+	M2 Finished ticket purchase #2
+	L2 Finished ticket purchase #3
+	New customer has arrived at seller L1
+	New customer has arrived at seller L1
+	L4 Finished ticket purchase #3
+	Sellers: M005, L101, serving customers.
+
+0:19 -	L0 Finished ticket purchase #3
+	Sellers: M203, L503, L404, L204, serving customers.
+
+0:20 -	New customer has arrived at seller M1
+	M0 Finished ticket purchase #5
+	Sellers: M102, L004, serving customers.
+
+0:21 -	Sellers: M006, serving customers.
+
+0:22 -	L3 Finished ticket purchase #3
+	M2 Finished ticket purchase #3
+	New customer has arrived at seller H1
+	Sellers: H102, serving customers.
+
+0:23 -	M1 Finished ticket purchase #2
+	M0 Finished ticket purchase #6
+	Sellers: L304, M204, serving customers.
+
+0:24 -	L4 Finished ticket purchase #4
+	L5 Finished ticket purchase #3
+	H1 Finished ticket purchase #2
+	Sellers: M103, M007, serving customers.
+
+0:25 -	L1 Finished ticket purchase #1
+	Sellers: L405, serving customers.
+
+0:26 -	L0 Finished ticket purchase #4
+	L2 Finished ticket purchase #4
+	Sellers: L102, serving customers.
+
+0:27 -	M2 Finished ticket purchase #4
+	New customer has arrived at seller H1
+	M1 Finished ticket purchase #3
+	Sellers: L005, H103, L205, serving customers.
+
+0:28 -	New customer has arrived at seller L5
+	M0 Finished ticket purchase #7
+	Sellers: M205, M104, L504, serving customers.
+
+0:29 -	L3 Finished ticket purchase #4
+	H1 Finished ticket purchase #3
+	Sellers: M008, serving customers.
+
+0:30 -	L4 Finished ticket purchase #5
+	L1 Finished ticket purchase #2
+	Sellers: H104, L305, serving customers.
+
+0:31 -	M2 Finished ticket purchase #5
+	Sellers: L103, L406, serving customers.
+
+0:32 -	L2 Finished ticket purchase #5
+	H1 Finished ticket purchase #4
+	M1 Finished ticket purchase #4
+	Sellers: M206, serving customers.
+
+0:33 -	L5 Finished ticket purchase #4
+	M0 Finished ticket purchase #8
+	Sellers: L206, M105, H105, serving customers.
+
+0:34 -	H1 Finished ticket purchase #5
+	L0 Finished ticket purchase #5
+	Sellers: L505, serving customers.
+
+0:35 -	M1 Finished ticket purchase #5
+	M2 Finished ticket purchase #6
+	L4 Finished ticket purchase #6
+	New customer has arrived at seller M0
+	New customer has arrived at seller M0
+	Sellers: M009, L006, serving customers.
+
+0:36 -	L3 Finished ticket purchase #5
+	Sellers: M207, M106, L407, serving customers.
+
+0:37 -	M0 Finished ticket purchase #9
+	Sellers: L306, serving customers.
+
+0:38 -	L2 Finished ticket purchase #6
+	L1 Finished ticket purchase #3
+	Sellers: M010, serving customers.
+
+0:39 -	New customer has arrived at seller H1
+	M1 Finished ticket purchase #6
+	M2 Finished ticket purchase #7
+	Sellers: L207, L104, H106, serving customers.
+
+0:40 -	L5 Finished ticket purchase #5
+	Sellers: M107, M208, serving customers.
+
+0:41 -	M0 Finished ticket purchase #10
+	L0 Finished ticket purchase #6
+	H1 Finished ticket purchase #6
+	Sellers: L506, serving customers.
+
+0:42 -	Sellers: M011, H107, L007, serving customers.
+
+0:43 -	L3 Finished ticket purchase #6
+	L4 Finished ticket purchase #7
+	H1 Finished ticket purchase #7
+	M2 Finished ticket purchase #8
+	No active sellers at this time
+
+0:44 -	M1 Finished ticket purchase #7
+	Sellers: M209, H108, L408, L307, serving customers.
+
+0:45 -	L1 Finished ticket purchase #4
+	H1 Finished ticket purchase #8
+	Sellers: M108, serving customers.
+
+0:46 -	L5 Finished ticket purchase #6
+	L2 Finished ticket purchase #7
+	M0 Finished ticket purchase #11
+	Sellers: H109, L105, serving customers.
+
+0:47 -	L0 Finished ticket purchase #7
+	M2 Finished ticket purchase #9
+	H1 Finished ticket purchase #9
+	M1 Finished ticket purchase #8
+	Sellers: M012, L208, L507, serving customers.
+
+0:48 -	Sellers: L008, M210, H110, M109, serving customers.
+
+0:49 -	No active sellers at this time
+
+0:50 -	L3 Finished ticket purchase #7
+	L4 Finished ticket purchase #8
+	H1 Finished ticket purchase #10
+	No active sellers at this time
+
+0:51 -	L5 Finished ticket purchase #7
+	M0 Finished ticket purchase #12
+	Sellers: L409, L308, H111, serving customers.
+
+0:52 -	M1 Finished ticket purchase #9
+	M2 Finished ticket purchase #10
+	Sellers: L508, M013, serving customers.
+
+0:53 -	H1 Finished ticket purchase #11
+	L2 Finished ticket purchase #8
+	L1 Finished ticket purchase #5
+	Sellers: M211, M110, serving customers.
+
+0:54 -	L0 Finished ticket purchase #8
+	M0 Finished ticket purchase #13
+	Sellers: H112, L209, L106, serving customers.
+
+0:55 -	L4 Finished ticket purchase #9
+	H1 Finished ticket purchase #12
+	Sellers: M014, L009, serving customers.
+
+0:56 -	M1 Finished ticket purchase #10
+	L3 Finished ticket purchase #8
+	Sellers: H113, L410, serving customers.
+
+0:57 -	M2 Finished ticket purchase #11
+	H1 Finished ticket purchase #13
+	Sellers: M111, L309, serving customers.
+
+0:58 -	M0 Finished ticket purchase #14
+	M2 Sorry customer 12 all seats are full.
+	H1 Sorry customer 14 all seats are full.
+	No active sellers at this time
+
+0:59 -	L5 Finished ticket purchase #8
+	M2 Sorry customer 13 all seats are full.
+	H1 Sorry customer 15 all seats are full.
+	L2 Finished ticket purchase #9
+	M0 Sorry customer 15 all seats are full.
+	No active sellers at this time
+
+0:60 -	M1 Finished ticket purchase #11
+	L1 Finished ticket purchase #6
+	No active sellers at this time
+
+0:61 -	L0 Finished ticket purchase #9
+	No active sellers at this time
+
+0:62 -	No active sellers at this time
+
+0:63 -	L4 Finished ticket purchase #10
+	No active sellers at this time
+
+0:64 -	L3 Finished ticket purchase #9
+	No active sellers at this time
+
+Seller L3 had to turn away 6 customers
+Seller M0 had to turn away 1 customers
+Seller L1 had to turn away 9 customers
+Seller L5 had to turn away 7 customers
+Seller L2 had to turn away 6 customers
+Seller M1 had to turn away 4 customers
+Seller L4 had to turn away 5 customers
+Seller L0 had to turn away 6 customers
+Seller M2 had to turn away 4 customers
+Seller H1 had to turn away 2 customers
+
+50 Customers could not be served in the allotted time.
+100 Customers were processed.
+
+H101	H102	H103	H104	H105	H106	H107	H108	H109	H110	
+H111	H112	M014	H113	M111	L309	L410	L009	L106	L209	
+M210	M109	M013	M211	M110	L508	L308	L409	L008	L507	
+M011	M209	M108	M012	L208	L105	L307	L408	L007	L506	
+M207	M106	M010	M107	M208	L104	L207	L306	L407	L006	
+M201	M001	M002	M101	M003	M004	M202	M005	M203	M102	
+M006	M204	M103	M007	M205	M104	M008	M206	M105	M009	
+L505	L206	L406	L103	L305	L504	L205	L005	L102	L405	
+L304	L004	L204	L404	L503	L101	L303	L003	L203	L403	
+L302	L502	L202	L002	L301	L402	L501	L201	L401	L001	
+
+
+-------- Results - H Sellers --------
+Avg Response Time: 2.23077
+Avg Turn Around Time: 3.69231
+Avg Throughput: 0.216667
+13 Customers of H got seats
+
+-------- Results - M Sellers --------
+Avg Response Time: 7.27778
+Avg Turn Around Time: 10.3611
+Avg Throughput: 0.6
+36 Customers of M got seats
+
+-------- Results - L Sellers --------
+Avg Response Time: 10.4314
+Avg Turn Around Time: 16.0588
+Avg Throughput: 0.85
+51 Customers of L got seats
+
+Thread execution finished

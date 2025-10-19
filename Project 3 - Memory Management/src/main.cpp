@@ -20,8 +20,8 @@ int main(int argc, char* argv[]){
         if(N <= 0){
             throw std::out_of_range("Integer must be positive");
         }
-    }catch(std::out_of_range){
-        std::cerr<<"Integer must be greater than 0"<<std::endl;
+    }catch(std::out_of_range& error){
+        std::cerr<<error.what()<<std::endl;
         exit(EXIT_FAILURE);
     }catch(...){
         std::cerr<<"Argument must be an integer"<<std::endl;

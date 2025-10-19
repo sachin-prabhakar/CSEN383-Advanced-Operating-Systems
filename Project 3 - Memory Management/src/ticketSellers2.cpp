@@ -164,14 +164,6 @@ void *ticketSeller(void *arg){
     sync_threads.arrive_and_wait();
 
     //Loop until time is up
-    /*
-    
-    This program has a bug in it.  WHile loop condition needs to be changed to ensure than ticket sellers who started selling a ticket before time
-    elapsed > 60 can finish selling that ticket after timeElapsed > 60.  Simply chaning the while loop condition to be something like
-    timeElapsed < 70 does not work 100%.  Sometimes the unservedcustomers variable will be incorrect which means that one of the Customers
-    is not being popped before the while loop terminates.
-    
-    */
     while(timeElapsed < 60 || curentCustomers !=0){
 
         //Sync 10 threads and print time before continuing

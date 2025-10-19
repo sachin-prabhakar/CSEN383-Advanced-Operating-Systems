@@ -17,6 +17,7 @@ struct threadData{
 struct Customer{
     int arrivalTime;
     int processingTime;
+    int officialArrivalTime;
     std::string sellerID;
     bool helped = false;
 
@@ -24,7 +25,7 @@ struct Customer{
         return arrivalTime > c1.arrivalTime;
     }
 
-    Customer(int a, int p, std::string id) : arrivalTime(a), processingTime(p), sellerID(id) {};
+    Customer(int a, int p, std::string id) : arrivalTime(a), processingTime(p), sellerID(id), officialArrivalTime(a){};
 };
 
 //Function for ticket seller

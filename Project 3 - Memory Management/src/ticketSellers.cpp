@@ -120,6 +120,16 @@ void printMetric(){
     }
     helperPrint(RT,TAT,'L',lSellers);
 
+    // Final statistics breakdown
+    std::cout<<"\n========== FINAL STATISTICS =========="<<std::endl;
+    std::cout<<"H customers who got seats: "<<hSellers.size()<<std::endl;
+    std::cout<<"M customers who got seats: "<<mSellers.size()<<std::endl;
+    std::cout<<"L customers who got seats: "<<lSellers.size()<<std::endl;
+    std::cout<<"Total customers served: "<<handledcustomers<<std::endl;
+    std::cout<<"Total customers turned away: "<<unservedcustomers<<std::endl;
+    std::cout<<"Total seats sold: "<<hSellers.size() + mSellers.size() + lSellers.size()<<std::endl;
+    std::cout<<"====================================="<<std::endl;
+
 }
 std::barrier printMetrics(10, printMetric);
 
@@ -132,7 +142,7 @@ std::barrier printMetrics(10, printMetric);
 */
 void printArrivals(std::string id, std::priority_queue<Customer> C, int time){
     while(!C.empty() && C.top().arrivalTime == time){
-        std::cout<<"New customer has arrived at seller "<<id<<std::endl<<"\t";
+        std::cout<<"0:"<<(time < 10 ? "0" : "")<<time<<" - Customer arrives at seller "<<id<<std::endl<<"\t";
         C.pop();
     }
 }
@@ -144,6 +154,22 @@ void printunservedCustomers(std::string id, std::priority_queue<Customer> C){
 /*
     === End of Event Functions ===
 */
+
+//Function to print seating chart
+void printSeatingChart(){
+    std::cout<<"\n--- Seating Chart ---"<<std::endl;
+    for(int row = 0; row < 10; row++){
+        for(int col = 0; col < 10; col++){
+            if(seats[row][col].length() == 0){
+                std::cout<<"----"<<"\t";
+            }else{
+                std::cout<<seats[row][col]<<"\t";
+            }
+        }
+        std::cout<<"\n";
+    }
+    std::cout<<"--- End Chart ---\n"<<std::endl;
+}
 
 //Function called when a seat is found
 void seatFound(int r, int c, std::string n, bool &f, std::priority_queue<Customer> &C){
@@ -158,6 +184,9 @@ void seatFound(int r, int c, std::string n, bool &f, std::priority_queue<Custome
     temp.startservice = timeElapsed;
     C.push(temp);
     f = true;
+    
+    // Print seating chart after each ticket sale
+    printSeatingChart();
 }
 
 //Function to generate customer queues with random runtime pre-calculated
@@ -254,7 +283,7 @@ void *ticketSeller(void *arg){
             bool found = false;
             switch(t){
                 case 'H':{
-                    std::string name = threadID + (customer < 10 ? "0"+ std::to_string(customer) : std::to_string(customer));
+                    std::string name = "H" + (customer < 10 ? "00"+ std::to_string(customer) : (customer < 100 ? "0"+ std::to_string(customer) : std::to_string(customer)));
                     for(int row = 0; row < 10 && !found; row++){
                         for(int col = 0; col < 10; col++){
                             if(seats[row][col].empty()){
@@ -289,7 +318,7 @@ void *ticketSeller(void *arg){
                     break;
                 }
             }//end switch
-            if(!found){std::cout<<threadID<<" Sorry customer "<<customer<<" all seats are full."<<std::endl<<"\t";}
+            if(!found){std::cout<<"0:"<<(timeElapsed < 10 ? "0" : "")<<timeElapsed<<" - "<<threadID<<" tells customer "<<customer<<" concert is sold out"<<std::endl<<"\t";}
             pthread_mutex_unlock(&mutex);
         }//end if
 
@@ -302,7 +331,7 @@ void *ticketSeller(void *arg){
                 temp.arrivalTime = 0; //Artificially decrease arrival time to keep entry at top of pq
                 Customers.push(temp);
             }else{
-                std::cout<<threadID<<" Finished ticket purchase #"<<customer<<std::endl<<"\t";
+                std::cout<<"0:"<<(timeElapsed < 10 ? "0" : "")<<timeElapsed<<" - "<<threadID<<" completes ticket purchase #"<<customer<<std::endl<<"\t";
                 curentCustomers--;
                 Customer temp = Customers.top();
                 temp.completionTime = timeElapsed;

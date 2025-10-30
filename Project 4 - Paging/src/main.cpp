@@ -2,17 +2,10 @@
 #include <stdio.h>
 #include <iostream>
 #include <string>
-#include "page.h"  //Functions to run the threads on
+#include "memory.h"
+#include "jobs.h"
+#include "pageTable.h"
 
-
-// Page replacement algorithm types
-enum class PageReplacementAlgorithm {
-    FIFO,
-    LRU,
-    LFU,
-    MFU,
-    RANDOM
-};
 
 
 int main(int argc, char* argv[]){

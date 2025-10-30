@@ -1,4 +1,6 @@
 #include "memory.h"
+#include "pageTable.h"
+#include "jobs.h"
 
 int Memory::numFree() {     // returns number of free pages
     int freePages = 0;

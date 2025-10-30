@@ -6,6 +6,24 @@
 #include <queue>
 #pragma once
 
+// Page replacement algorithm types
+enum class PageReplacementAlgorithm {
+    FIFO,
+    LRU,
+    LFU,
+    MFU,
+    RANDOM
+};
+
+// Page frame structure
+struct PageFrame {
+    int processId;      // Process ID using this frame (-1 if free)
+    int pageNumber;     // Page number within the process
+    int lastAccessTime; // For LRU
+    int accessCount;    // For LFU/MFU
+    int loadTime;       // For FIFO
+};
+
 // Process page tracking
 struct ProcessPageInfo {
     int processId;

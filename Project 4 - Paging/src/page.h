@@ -32,6 +32,37 @@ struct ProcessPageInfo {
     std::vector<bool> pagesInMemory; // Which pages are currently in memory
     std::vector<int> pageFrames;     // Which frame each page is in (-1 if not in memory)
 };
+#include <vector>
+#include <map>
+#include <queue>
+#pragma once
+
+// Page replacement algorithm types
+enum class PageReplacementAlgorithm {
+    FIFO,
+    LRU,
+    LFU,
+    MFU,
+    RANDOM
+};
+
+// Page frame structure
+struct PageFrame {
+    int processId;      // Process ID using this frame (-1 if free)
+    int pageNumber;     // Page number within the process
+    int lastAccessTime; // For LRU
+    int accessCount;    // For LFU/MFU
+    int loadTime;       // For FIFO
+};
+
+// Process page tracking
+struct ProcessPageInfo {
+    int processId;
+    int currentPage;        // Current page being referenced
+    int lastReferenceTime;  // Last time this process made a reference
+    std::vector<bool> pagesInMemory; // Which pages are currently in memory
+    std::vector<int> pageFrames;     // Which frame each page is in (-1 if not in memory)
+};
 
 struct Process {
     int id;
@@ -39,12 +70,15 @@ struct Process {
     int duration;   // initial process duration (set at construction)
     int remaining;  // remaining time in process (starts at -1 until process begins)
     int arrival;    // jobs arrive between 0 and 599 (60 seconds measured every 100ms)
+    int currentPage;
     static int numProcs;
 
     Process(int size, int duration, int arrival);
-    Process(u_int32_t seed);
+    Process(uint32_t seed);
     friend bool operator<(const Process& lhs, const Process& rhs);
     friend std::ostream& operator<<(std::ostream& os, const Process& job);
+
+    int run(uint32_t seed = 42);
 };
 
 struct Memory {
@@ -67,13 +101,15 @@ struct Memory {
     int pageMisses;
     int currentTime; // Current simulation time in 100ms units
 
-    Memory(u_int32_t seed, int frames = 100, int numJobs = 150);
+    Memory(uint32_t seed, int frames = 100, int numJobs = 150);
     Memory(std::list<Process>& jq, int frames = 100);
+
+    //Core memory management functions
 
     //Core memory management functions
     int numFree();     // returns number of free pages
 
-    // TODO: Add other function declarations as needed
+    int run();
 };
 
-std::list<Process> generateJobs(u_int32_t seed, int numJobs = 150);
+std::list<Process> generateJobs(uint32_t seed, int numJobs = 150);

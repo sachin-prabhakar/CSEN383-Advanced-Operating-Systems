@@ -10,7 +10,7 @@ Process::Process(int size, int duration, int arrival) {
     this->remaining = -1;
 }
 
-Process::Process(u_int32_t seed) {
+Process::Process(uint32_t seed) {
     std::mt19937 gen(seed);
     std::uniform_int_distribution<int> sizeDist(0, 3);
     std::uniform_int_distribution<int> durDist(1, 5);
@@ -24,7 +24,7 @@ Process::Process(u_int32_t seed) {
     this->remaining = -1;
 }
 
-std::list<Process> generateJobs(u_int32_t seed, int numJobs) {
+std::list<Process> generateJobs(uint32_t seed, int numJobs) {
     std::mt19937 gen(seed);
     std::uniform_int_distribution<int> sizeDist(0, 3);
     std::uniform_int_distribution<int> durDist(1, 5);
@@ -49,4 +49,23 @@ std::ostream& operator<<(std::ostream& os, const Process& job) {
     os<<"\nPROCESS "<<job.id<<"\n\tARRIVAL\t="<<job.arrival<<"\n\tSIZE=\t"<<job.size;
     os<<"\n\tDUR=\t"<<job.duration<<"\n\tREM=\t"<<job.remaining<<std::endl;
     return os;
+}
+
+int Process::run(uint32_t seed) {
+    remaining--;
+    std::mt19937 gen(seed);
+    std::uniform_int_distribution<int> rdist(0, 9);
+    int r = rdist(gen);
+    int pageref;
+    if (r < 7) {
+        std::uniform_int_distribution<int> ddist(-1, 1);
+        pageref = (currentPage + ddist(gen)) % size;
+    }
+    else {
+        std::uniform_int_distribution<int> ddist(2, 9);
+        pageref = (currentPage + ddist(gen)) % size;
+    }
+    // TODO: generate record here
+    currentPage = pageref;
+    return pageref;
 }

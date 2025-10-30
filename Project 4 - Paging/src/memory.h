@@ -1,10 +1,11 @@
+#pragma once
+
 #include <random>
 #include <list>
 #include <iostream>
 #include <vector>
 #include <map>
 #include <queue>
-#pragma once
 
 // Page frame structure
 struct PageFrame {
@@ -14,6 +15,25 @@ struct PageFrame {
     int accessCount;    // For LFU/MFU
     int loadTime;       // For FIFO
 };
+
+//
+struct PageNode {
+    PageFrame page;
+    PageNode* next;
+    PageNode* createPage(uint32_t seed);
+};
+
+class MemList {
+    private:
+        PageNode* head;
+    public:
+        MemList() : head(nullptr) {}
+
+        void addJob_Start(PageNode* newJob);
+        void addJob_End(PageNode* newJob);
+        void addJob_Sorted(PageNode* newJob);     
+};
+
 
 struct Memory {
     int totalPages;

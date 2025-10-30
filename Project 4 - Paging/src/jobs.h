@@ -1,4 +1,5 @@
-# pragma once
+#pragma once
+
 #include <random>
 #include <forward_list>
 #include <iostream>
@@ -24,9 +25,10 @@ struct Job {
 
 };
 
+//Struct to hold each job/process
 struct JobNode {
     Job job;
-    JobNode * next;
+    JobNode* next;
     JobNode* createJob(uint32_t seed);
 };
 
@@ -40,18 +42,5 @@ class JobList {
         void addJob_End(JobNode* newJob);
         void addJob_Sorted(JobNode* newJob);     
 };
-
-class MemList {
-    private:
-        JobNode* head;
-    public:
-        MemList() : head(nullptr) {}
-
-        void addJob_Start(JobNode* newJob);
-        void addJob_End(JobNode* newJob);
-        void addJob_Sorted(JobNode* newJob);     
-};
-
-
 
 JobNode* generateJobs(uint32_t seed, int numJobs = 150);

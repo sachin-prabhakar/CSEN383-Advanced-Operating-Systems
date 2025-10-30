@@ -1,4 +1,4 @@
-#include "page.h"
+#include "memory.h"
 
 int Memory::numFree() {     // returns number of free pages
     int freePages = 0;

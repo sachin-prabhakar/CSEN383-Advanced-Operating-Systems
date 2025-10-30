@@ -62,12 +62,12 @@ JobNode* generateJobs(uint32_t seed, int numJobs) {
     std::forward_list<Job> jobList;
 
     for (int i = 0; i < numJobs; i++) {
-        jobList.push_back(Job(seed));;
+        //jobList.push_back(Job(seed));;
     }
 
     jobList.sort();
 
-    return jobList;
+    return; //jobList;
 }
 
 //Vector Sorting Function

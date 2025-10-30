@@ -15,7 +15,7 @@ Memory::Memory(std::list<Process>& jq, int frames) {
     this->running = {};
 }
 
-Memory::Memory(u_int32_t seed, int frames, int numJobs) {
+Memory::Memory(uint32_t seed, int frames, int numJobs) {
     this->totalPages = frames;
     this->pageFrames[frames] = {0};
     this->jobQueue = generateJobs(seed, numJobs);

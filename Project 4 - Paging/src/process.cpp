@@ -10,7 +10,7 @@ Process::Process(int size, int duration, int arrival) {
     this->remaining = -1;
 }
 
-Process::Process(u_int32_t seed) {
+Process::Process(uint32_t seed) {
     std::mt19937 gen(seed);
     std::uniform_int_distribution<int> sizeDist(0, 3);
     std::uniform_int_distribution<int> durDist(1, 5);
@@ -24,7 +24,7 @@ Process::Process(u_int32_t seed) {
     this->remaining = -1;  
 }
 
-std::list<Process> generateJobs(u_int32_t seed, int numJobs) {
+std::list<Process> generateJobs(uint32_t seed, int numJobs) {
     std::mt19937 gen(seed);
     std::uniform_int_distribution<int> sizeDist(0, 3);
     std::uniform_int_distribution<int> durDist(1, 5);

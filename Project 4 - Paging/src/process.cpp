@@ -21,7 +21,7 @@ Process::Process(u_int32_t seed) {
     this->arrival = arrivalDist(gen);
     this->size = sizes[sizeDist(gen)];
     this->duration = durDist(gen);
-    this->remaining = -1;  
+    this->remaining = -1;
 }
 
 std::list<Process> generateJobs(u_int32_t seed, int numJobs) {

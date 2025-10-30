@@ -1,12 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
-#include <pthread.h>
 #include "page.h"  //Functions to run the threads on
 
 
 int main(int argc, char* argv[]){
-    u_int32_t seed = 0;
+    uint32_t seed = 0;
     const int numJobs = 150;
     if (argc > 2 || argc <= 0) {
         std::cout<<"USAGE: ./main [seed]"<<std::endl;

@@ -24,6 +24,7 @@ struct JobNode {
     Job job;
     JobNode* next;
     JobNode(uint32_t seed) : job(Job(seed)), next(nullptr){}
+    JobNode(Job temp) : job(temp), next(nullptr){}
 };
 
 class JobList {

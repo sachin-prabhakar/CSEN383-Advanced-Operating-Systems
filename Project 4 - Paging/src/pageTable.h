@@ -33,3 +33,8 @@ struct ProcessPageInfo {
     std::vector<int> pageFrames;     // Which frame each page is in (-1 if not in memory)
 };
 
+    // Statistics
+    // int totalReferences;
+    // int pageHits;
+    // int pageMisses;
+    // int currentTime; // Current simulation time in 100ms units

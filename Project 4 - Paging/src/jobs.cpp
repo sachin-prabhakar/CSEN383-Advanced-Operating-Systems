@@ -1,5 +1,7 @@
 #include "jobs.h"
 
+int Job::numProcs = 0;  // initialize numProcs
+
 Job::Job(uint32_t seed) {
     std::mt19937 gen(seed);
     std::uniform_int_distribution<int> sizeDist(0, 3);
@@ -16,9 +18,8 @@ Job::Job(uint32_t seed) {
 
 JobNode* createJob(uint32_t seed){
     JobNode* newJob = new JobNode;
-    newJob->job = Job::Job(seed);
+    newJob->job = Job(seed);
     newJob->next = nullptr;
-
     return newJob;
 }
 

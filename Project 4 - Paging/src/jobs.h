@@ -2,7 +2,6 @@
 #include <random>
 #include <iostream>
 
-int Job::numProcs = 0;  // initialize numProcs
 
 struct Job {
     int id;

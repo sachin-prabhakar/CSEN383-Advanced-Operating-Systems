@@ -57,22 +57,18 @@ void JobList::addJob_Sorted(JobNode* newJob){
     curr->next = newJob;
 }
 
-JobNode* generateJobs(uint32_t seed, int numJobs) {
+JobList* generateJobs(uint32_t seed, int numJobs) {
 
-    std::forward_list<Job> jobList;
+    JobList* tempList = new JobList;
+    JobNode* tempNode = new JobNode;
 
     for (int i = 0; i < numJobs; i++) {
-        //jobList.push_back(Job(seed));;
+        std::random_device rd;
+        uint32_t seed1 = rd();
+        tempList->addJob_Sorted(tempNode->createJob(seed1));
     }
 
-    jobList.sort();
-
-    return; //jobList;
-}
-
-//Vector Sorting Function
-bool arrivaltimeSort(const Job& job1, const Job& job2){
-    return job1.arrivalTime < job2.arrivalTime;
+    return tempList;
 }
 
 std::ostream& operator<<(std::ostream& os, const Job& job) {

@@ -24,4 +24,5 @@ struct Memory {
     
     // Page replacement algorithms
     int findLRUVictim();  // Returns frame number of LRU victim page
+    int findFIFOVictim(); // Returns frame number of FIFO victim page
 };

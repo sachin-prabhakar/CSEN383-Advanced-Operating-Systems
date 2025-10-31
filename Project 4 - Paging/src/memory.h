@@ -9,27 +9,35 @@
 #include "pageTable.h"
 #include "jobs.h"
 
-//
-struct PageNode {
-    PageFrame page;
-    PageNode* next;
-    PageNode* createPage(uint32_t seed);
+
+struct MemNode {
+    int start_loc;
+    int end_loc;
+    static int nodeid;
+    //Check to see if each node in memory has proper start and end address
+    MemNode() : start_loc(nodeid++), end_loc(nodeid), next(nullptr) {}
+    MemNode* next;
 };
 
 class MemList {
     private:
-        PageNode* head;
+        MemNode* head;
+        int totalFrames = 100;
+        int freeFrames = 100;
     public:
         MemList() : head(nullptr) {}
-
-        void addJob_Start(PageNode* newJob);
-        void addJob_End(PageNode* newJob);
-        void addJob_Sorted(PageNode* newJob);     
+        void addMem(MemNode* newNode);
+        int getTotalFrames() {return totalFrames;}
+        int getFreeFrames() {return freeFrames;}
+        void increaseFreeFrames(int f){ if(freeFrames + f < 100){freeFrames +=f;}}
+        void decreaseFreeFrames(int f){ if(freeFrames - f > 0){freeFrames -=f;}}
 };
+
+MemList* generateFreeList();
+
 
 
 struct Memory {
-    int totalPages;
     JobList *JobsHead;    // jobs that do not have memory allocated
     std::vector<Job> running;     // all currently running jobs (with allocated pages); pagetable stuff here
     MemList *FreeListHead;
@@ -50,10 +58,9 @@ struct Memory {
     // int pageMisses;
     // int currentTime; // Current simulation time in 100ms units
 
-    Memory(uint32_t seed, int frames = 100, int numJobs = 150);
-    Memory(std::list<Job>& jq, int frames = 100);
-
+    Memory(uint32_t seed, int numJobs = 150);
     //Core memory management functions
     int numFree();     // returns number of free pages
+
     int run();
 };

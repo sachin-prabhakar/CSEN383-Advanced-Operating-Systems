@@ -54,10 +54,17 @@ JobList* generateJobs(uint32_t seed, int numJobs) {
 
     JobList* tempList = new JobList;
 
+    std::mt19937 gen(seed);
+    std::uniform_int_distribution<int> sizeDist(0, 3);
+    std::uniform_int_distribution<int> serviceDist(1, 5);
+    std::uniform_int_distribution<int> arrivalDist(0, 599);
+    int sizes[] = {5, 11, 17, 31};
+
     for (int i = 0; i < numJobs; i++) {
-        std::random_device rd;
-        uint32_t seed1 = rd();
-        tempList->addJob_Sorted(new JobNode(seed1));
+        int procSize = sizes[sizeDist(gen)];
+        int arrivalTime = arrivalDist(gen);
+        int serviceTime = serviceDist(gen);
+        tempList->addJob_Sorted(new JobNode(Job(procSize,serviceTime,arrivalTime)));
     }
 
     return tempList;

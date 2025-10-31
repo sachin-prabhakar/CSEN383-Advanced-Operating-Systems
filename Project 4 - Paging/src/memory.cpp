@@ -10,6 +10,12 @@ Memory::Memory(uint32_t seed, int numJobs) {
     freeList = {};                          //Vector to track free Pages
     pageTable;                              //Page Table to track all PTE's
 
+    //initializing Frame Table with 100 PageFrames (all initially free)
+    frameTable.resize(100);
+    for (int i = 0; i < 100; i++) {
+        frameTable[i] = PageFrame();  // processId=-1, pageNumber=-1 (free)
+    }
+
     //Populate Free List with 100 Pages
     for (int i = 0; i < 100; i++)
         freeList.push_back(i);
@@ -23,12 +29,73 @@ pageMisses = 0;
 currentTime = 0;
 
 */
+int Memory::numFree() {
+    return freeList.size();
+}
+
 void Memory::print() {
     std::cout<<"====PRINTING MEM====\n";
+    std::cout<<"Free frames: ";
     for (auto &it : freeList) {
         std::cout<<it<<", ";
     }
     std::cout<<std::endl;
+}
+
+int Memory::findLRUVictim() {
+    // LRU: Find the frame with the oldest (minimum) lastAccessTime
+    int lruFrame = -1;
+    int minAccessTime = -1;
+    bool foundValidAccessTime = false;
+    
+    // Scan through all frames in frameTable
+    for (size_t frameNum = 0; frameNum < frameTable.size(); frameNum++) {
+        const PageFrame& frame = frameTable[frameNum];
+        
+        // Skip free frames (processId == -1 means frame is free)
+        if (frame.processId == -1) {
+            continue;
+        }
+        
+        // Get the corresponding PTE using processId and pageNumber from frame
+        PageTableEntry* pte = pageTable.getEntry(frame.processId, frame.pageNumber);
+        
+        if (pte == nullptr || !pte->valid) {
+            // This shouldn't happen if frameTable is consistent, but handling it either way
+            continue;
+        }
+        
+        // For LRU, we want the frame with minimum lastAccessTime
+        // If lastAccessTime is valid (not -1), use it for comparison
+        if (pte->lastAccessTime != -1) {
+            if (!foundValidAccessTime || pte->lastAccessTime < minAccessTime) {
+                lruFrame = frameNum;
+                minAccessTime = pte->lastAccessTime;
+                foundValidAccessTime = true;
+            }
+        } else if (!foundValidAccessTime) {
+            // If we haven't found any frame with valid access time yet,
+            // use this frame as candidate (though lastAccessTime is -1)
+            // This handles edge cases where pages haven't been accessed yet
+            if (lruFrame == -1) {
+                lruFrame = frameNum;
+            }
+        }
+    }
+    
+    // If no valid frame found (all frames are free), return -1
+    // Otherwise return the LRU frame (or first occupied frame if no valid access times found)
+    if (lruFrame == -1) {
+        // Fallback: find first occupied frame (shouldn't happen if memory is full)
+        for (size_t frameNum = 0; frameNum < frameTable.size(); frameNum++) {
+            if (frameTable[frameNum].processId != -1) {
+                lruFrame = frameNum;
+                break;
+            }
+        }
+    }
+    
+    return lruFrame;
 }
 
 int Memory::run() {

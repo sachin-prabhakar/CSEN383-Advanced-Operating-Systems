@@ -21,4 +21,7 @@ struct Memory {
     int numFree();     // returns number of free pages
     void print();
     int run();
+    
+    // Page replacement algorithms
+    int findLRUVictim();  // Returns frame number of LRU victim page
 };

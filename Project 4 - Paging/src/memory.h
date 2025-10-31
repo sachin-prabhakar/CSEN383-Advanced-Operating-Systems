@@ -6,15 +6,7 @@
 #include <vector>
 #include <map>
 #include <queue>
-
-// Page frame structure
-struct PageFrame {
-    int processId;      // Process ID using this frame (-1 if free)
-    int pageNumber;     // Page number within the process
-    int lastAccessTime; // For LRU
-    int accessCount;    // For LFU/MFU
-    int loadTime;       // For FIFO
-};
+#include "pageTable.h"
 
 //
 struct PageNode {

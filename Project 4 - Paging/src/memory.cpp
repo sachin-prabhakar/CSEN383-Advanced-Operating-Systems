@@ -16,6 +16,20 @@ MemList* generateFreeList(){
     return tempList;
 }
 
+void MemList::print() {
+    MemNode* it = head;
+    std::cout<<"\n===FREE BLOCKS===\n";
+    while (it->next != nullptr) {
+        std::cout<<it<<std::endl;
+        it = it->next;
+    }
+}
+
+std::ostream& operator<<(std::ostream& os, const MemNode& node) {
+    os<<"("<<node.start_loc<<", "<<node.end_loc<<")";
+    return os;
+}
+
 void MemList::addMem(MemNode* newNode){
     if(head == nullptr || newNode->start_loc < head->start_loc){
         newNode->next = head;

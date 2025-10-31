@@ -17,6 +17,7 @@ struct MemNode {
     //Check to see if each node in memory has proper start and end address
     MemNode() : start_loc(nodeid++), end_loc(nodeid), next(nullptr) {}
     MemNode* next;
+    friend std::ostream& operator<<(std::ostream& os, const MemNode& node);
 };
 
 class MemList {
@@ -31,6 +32,7 @@ class MemList {
         int getFreeFrames() {return freeFrames;}
         void increaseFreeFrames(int f){ if(freeFrames + f < 100){freeFrames +=f;}}
         void decreaseFreeFrames(int f){ if(freeFrames - f > 0){freeFrames -=f;}}
+        void print();
 };
 
 MemList* generateFreeList();

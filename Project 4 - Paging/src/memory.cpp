@@ -20,7 +20,7 @@ void MemList::print() {
     MemNode* it = head;
     std::cout<<"\n===FREE BLOCKS===\n";
     while (it->next != nullptr) {
-        std::cout<<it<<std::endl;
+        std::cout<<it->start_loc<<std::endl;
         it = it->next;
     }
 }
@@ -37,7 +37,7 @@ void MemList::addMem(MemNode* newNode){
         return;
     }
     MemNode* curr = head;
-    while(curr != nullptr && curr->next->start_loc < newNode->start_loc){
+    while(curr->next != nullptr && curr->next->start_loc < newNode->start_loc){
         curr = curr->next;
     }
     newNode->next = curr->next;

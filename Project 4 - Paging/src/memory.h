@@ -63,6 +63,6 @@ struct Memory {
     Memory(uint32_t seed, int numJobs = 150);
     //Core memory management functions
     int numFree();     // returns number of free pages
-
+    void print(){FreeListHead->print();}
     int run();
 };

@@ -43,7 +43,7 @@ void JobList::addJob_Sorted(JobNode* newJob){
     }
 
     JobNode* curr = head;
-    while(curr != nullptr && curr->next->job.arrivalTime < newJob->job.arrivalTime){
+    while(curr->next != nullptr && curr->next->job.arrivalTime < newJob->job.arrivalTime){
         curr = curr->next;
     }
     newJob->next = curr->next;

@@ -16,14 +16,6 @@ Job::Job(uint32_t seed) {
     remainingTime = -1;  
 }
 
-JobNode* createJob(uint32_t seed){
-    JobNode* newJob = new JobNode;
-    newJob->job = Job(seed);
-    newJob->next = nullptr;
-    return newJob;
-}
-
-
 void JobList::addJob_Start(JobNode* newJob){
     newJob->next = head;
     head = newJob;
@@ -61,12 +53,11 @@ void JobList::addJob_Sorted(JobNode* newJob){
 JobList* generateJobs(uint32_t seed, int numJobs) {
 
     JobList* tempList = new JobList;
-    JobNode* tempNode = new JobNode;
 
     for (int i = 0; i < numJobs; i++) {
         std::random_device rd;
         uint32_t seed1 = rd();
-        tempList->addJob_Sorted(tempNode->createJob(seed1));
+        tempList->addJob_Sorted(new JobNode(seed1));
     }
 
     return tempList;
@@ -82,7 +73,7 @@ std::ostream& operator<<(std::ostream& os, const Job& job) {
 bool operator<(const Job& lhs, const Job& rhs) {
         return lhs.arrivalTime < rhs.arrivalTime;
     }
-    
+
 //std::list<Process> generateJobs(uint32_t seed, int numJobs) {
 //     std::mt19937 gen(seed);
 //     std::uniform_int_distribution<int> sizeDist(0, 3);

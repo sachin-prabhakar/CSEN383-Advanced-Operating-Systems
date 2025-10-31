@@ -23,7 +23,7 @@ struct Job {
 struct JobNode {
     Job job;
     JobNode* next;
-    JobNode* createJob(uint32_t seed);
+    JobNode(uint32_t seed) : job(Job(seed)), next(nullptr){}
 };
 
 class JobList {
@@ -38,22 +38,3 @@ class JobList {
 };
 
 JobList* generateJobs(uint32_t seed, int numJobs = 150);
-
-int Job::run(uint32_t seed) {
-    remainingTime--;
-    std::mt19937 gen(seed);
-    std::uniform_int_distribution<int> rdist(0, 9);
-    int r = rdist(gen);
-    int pageref;
-    if (r < 7) {
-        std::uniform_int_distribution<int> ddist(-1, 1);
-        pageref = (currentPage + ddist(gen)) % procSize;
-    }
-    else {
-        std::uniform_int_distribution<int> ddist(2, 9);
-        pageref = (currentPage + ddist(gen)) % procSize;
-    }
-    // TODO: generate record here
-    currentPage = pageref;
-    return pageref;
-}

@@ -23,10 +23,9 @@ int main(int argc, char* argv[]){
         }
     }
 
-    Memory mem(seed, 100, numJobs);
-    for (auto &it : mem.jobQueue) {	// jobs that are ready but not running are waiting
-        std::cout<<it<<std::endl;
-    }
+    //Memory mem[5];
+
+    Memory mem(seed, numJobs);
 
     return 0;
 }

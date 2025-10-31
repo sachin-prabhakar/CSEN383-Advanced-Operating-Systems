@@ -1,42 +1,28 @@
 #include "memory.h"
-#include "pageTable.h"
-#include "jobs.h"
-
-
 
 
 Memory::Memory(uint32_t seed, int numJobs) {
 
-    //Linked List of available jobs
-    jobQueue = generateJobs(seed, numJobs);
-    freeList = {};
+    //Initialize Vectors
+    jobQueue = generateJobs(seed, numJobs); //Vector of available jobs
+    running = {};                           //Vector of running jobs
+    finished = {};                          //Vector of finished jobs
+    freeList = {};                          //Vector to track free Pages
+    pageTable;                              //Page Table to track all PTE's
+
+    //Populate Free List with 100 Pages
     for (int i = 0; i < 100; i++)
         freeList.push_back(i);
-
-    //List or array, etc... For page Table
-
-
-    // this->totalPages = frames;
-    // this->pageFrames.resize(frames);
-    // this->pageFrames.resize(frames);
-    // this->jobQueue = generateJobs(seed, numJobs);
-    // this->running = {};
-    // this->algorithm = PageReplacementAlgorithm::FIFO;
-    // this->totalReferences = 0;
-    // this->pageHits = 0;
-    // this->pageMisses = 0;
-    // this->currentTime = 0;
-
-    // // Initialize all frames as free
-    // for (int i = 0; i < frames; i++) {
-    //     pageFrames[i].processId = -1;
-    //     pageFrames[i].pageNumber = -1;
-    //     pageFrames[i].lastAccessTime = -1;
-    //     pageFrames[i].accessCount = 0;
-    //     pageFrames[i].loadTime = -1;
-    // }
 }
+/*
+Need to Implement tracking
 
+totalReferences = 0;
+pageHits = 0;
+pageMisses = 0;
+currentTime = 0;
+
+*/
 void Memory::print() {
     std::cout<<"====PRINTING MEM====\n";
     for (auto &it : freeList) {

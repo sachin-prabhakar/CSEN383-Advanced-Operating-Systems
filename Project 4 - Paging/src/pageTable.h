@@ -15,23 +15,32 @@ enum class PageReplacementAlgorithm {
     RANDOM
 };
 
-// Page frame structure
+// // Page frame structure
+// struct PageFrame {
+//     int processId;      // Process ID using this frame (-1 if free)
+//     int pageNumber;     // Page number within the process
+//     int lastAccessTime; // For LRU
+//     int accessCount;    // For LFU/MFU
+//     int loadTime;       // For FIFO
+//     PageFrame() : processId(-1), pageNumber(-1), lastAccessTime(-1), accessCount(-1), loadTime(-1){}
+// };
+
+// // Process page tracking
+// struct ProcessPageInfo {
+//     int processId;
+//     int currentPage;        // Current page being referenced
+//     int lastReferenceTime;  // Last time this process made a reference
+//     std::vector<bool> pagesInMemory; // Which pages are currently in memory
+//     std::vector<int> pageFrames;     // Which frame each page is in (-1 if not in memory)
+// };
+
 struct PageFrame {
     int processId;      // Process ID using this frame (-1 if free)
     int pageNumber;     // Page number within the process
-    int lastAccessTime; // For LRU
-    int accessCount;    // For LFU/MFU
-    int loadTime;       // For FIFO
+    PageFrame(): processId(-1), pageNumber(-1){}
 };
 
-// Process page tracking
-struct ProcessPageInfo {
-    int processId;
-    int currentPage;        // Current page being referenced
-    int lastReferenceTime;  // Last time this process made a reference
-    std::vector<bool> pagesInMemory; // Which pages are currently in memory
-    std::vector<int> pageFrames;     // Which frame each page is in (-1 if not in memory)
-};
+
 
 struct PageTableEntry {
     int frameNumber;        // -1 if not in memory

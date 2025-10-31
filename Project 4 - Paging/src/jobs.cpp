@@ -76,3 +76,25 @@ std::ostream& operator<<(std::ostream& os, const Job& job) {
     os<<"\n\tDUR=\t"<<job.serviceTime<<"\n\tREM=\t"<<job.remainingTime<<std::endl;
     return os;
 }
+
+
+bool operator<(const Job& lhs, const Job& rhs) {
+        return lhs.arrivalTime < rhs.arrivalTime;
+    }
+    
+//std::list<Process> generateJobs(uint32_t seed, int numJobs) {
+//     std::mt19937 gen(seed);
+//     std::uniform_int_distribution<int> sizeDist(0, 3);
+//     std::uniform_int_distribution<int> durDist(1, 5);
+//     std::uniform_int_distribution<int> arrivalDist(0, 599);
+//     int sizes[] = {5, 11, 17, 31};
+
+//     std::list<Process> jobs;
+
+//     for (int i = 0; i < numJobs; i++) {
+//         jobs.push_back(Process(sizes[sizeDist(gen)], durDist(gen), arrivalDist(gen)));
+//     }
+//     jobs.sort();
+
+//     return jobs;
+// }

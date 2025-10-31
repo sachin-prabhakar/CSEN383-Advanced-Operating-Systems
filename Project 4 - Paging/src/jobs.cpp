@@ -14,21 +14,23 @@ Job::Job(uint32_t seed) {
     procSize = sizes[sizeDist(gen)];
     arrivalTime = arrivalDist(gen);
     serviceTime = serviceDist(gen);
-    remainingTime = -1;  
+    remainingTime = -1;
+    finishTime = -1;
+    pageTable = {};
 }
 
 bool jobcmp(const Job &j1, const Job &j2) {
     return j1.arrivalTime < j2.arrivalTime;
 }
 
-std::vector<Job> generateJobs(uint32_t seed, int numJobs) {
+std::deque<Job> generateJobs(uint32_t seed, int numJobs) {
 
     std::mt19937 gen(seed);
     std::uniform_int_distribution<int> sizeDist(0, 3);
     std::uniform_int_distribution<int> serviceDist(1, 5);
     std::uniform_int_distribution<int> arrivalDist(0, 599);
     int sizes[] = {5, 11, 17, 31};
-    std::vector<Job> jobs = {};
+    std::deque<Job> jobs = {};
 
     for (int i = 0; i < numJobs; i++) {
         int procSize = sizes[sizeDist(gen)];
@@ -43,8 +45,9 @@ std::vector<Job> generateJobs(uint32_t seed, int numJobs) {
 }
 
 std::ostream& operator<<(std::ostream& os, const Job& job) {
-    os<<"\nPROCESS "<<job.id<<"\n\tARRIVAL\t="<<job.arrivalTime<<"\n\tSIZE=\t"<<job.procSize;
-    os<<"\n\tDUR=\t"<<job.serviceTime<<"\n\tREM=\t"<<job.remainingTime<<std::endl;
+    os<<"\nPROCESS "<<job.id<<"\n\tARRIVAL\t"<<job.arrivalTime<<"\n\tSIZE\t"<<job.procSize;
+    os<<"\n\tDUR\t"<<job.serviceTime<<"\n\tREM\t"<<job.remainingTime<<"\n\tFIN\t"<<job.finishTime;
+    os<<std::endl;
     return os;
 }
 

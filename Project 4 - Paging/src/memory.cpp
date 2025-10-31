@@ -3,62 +3,95 @@
 #include "jobs.h"
 
 
-
-
 Memory::Memory(uint32_t seed, int numJobs) {
 
-    //Linked List of available jobs
-    jobQueue = generateJobs(seed, numJobs);
-    freeList = {};
-    for (int i = 0; i < 100; i++)
-        freeList.push_back(i);
-
+    jobQueue = generateJobs(seed, numJobs); // jobQueue is sorted by arrival time
+    running= {};
+    finished = {};
+    for (auto &it : freeList)   it = -1;
     //List or array, etc... For page Table
 
-
-    // this->totalPages = frames;
-    // this->pageFrames.resize(frames);
-    // this->pageFrames.resize(frames);
-    // this->jobQueue = generateJobs(seed, numJobs);
-    // this->running = {};
-    // this->algorithm = PageReplacementAlgorithm::FIFO;
-    // this->totalReferences = 0;
-    // this->pageHits = 0;
-    // this->pageMisses = 0;
-    // this->currentTime = 0;
-
-    // // Initialize all frames as free
-    // for (int i = 0; i < frames; i++) {
-    //     pageFrames[i].processId = -1;
-    //     pageFrames[i].pageNumber = -1;
-    //     pageFrames[i].lastAccessTime = -1;
-    //     pageFrames[i].accessCount = 0;
-    //     pageFrames[i].loadTime = -1;
-    // }
 }
 
+int Memory::numFree() {
+    int count = 0;
+    for (auto &it : freeList) count+= it==-1 ? 1 : 0;
+    return count;
+}
+
+
 void Memory::print() {
-    std::cout<<"====PRINTING MEM====\n";
-    for (auto &it : freeList) {
-        std::cout<<it<<", ";
-    }
+    std::cout<<"========PRINTING MEM========\n";
+    for (auto &it : freeList)   std::cout<<it<<", ";
     std::cout<<std::endl;
+
+    std::cout<<"========PRINTING JOB QUEUE========\n";
+    for (auto &it : jobQueue)   std::cout<<it;
+    std::cout<<std::endl;
+
+    std::cout<<"========PRINTING RUNNING========\n";
+    for (auto &it : running)   std::cout<<it;
+    std::cout<<std::endl;
+
+    std::cout<<"========PRINTING FINISHED========\n";
+    for (auto &it : finished)   std::cout<<it;
+    std::cout<<std::endl;
+}
+
+
+
+int Memory::reservePage(Job &job) {
+    for (size_t i = 0; i < freeList.size(); i++) 
+        if (freeList[i] == -1) {
+            freeList[i] = job.id;
+            // here add page i to job's pagetable i think
+            return i;
+        }
+    return -10; // failed to find free page
+}
+
+int Memory::assignPage(Job &job, int (*replacementAlgo)(Job)) {
+    if (job.pageTable.size() == 0) {
+
+    }
+    
 }
 
 int Memory::run() {
     int t = 0;  // time slize (every 100ms)
-    while (jobQueue.empty() && !running.empty() && t < 600) {
-        // while (numFree() >= 4 && jobQueue.front().arrivalTime <= t) {
-        //     // fill up running
-        //     running.push_back(jobQueue.front());
-        //     jobQueue.pop_front();
-        //     jobQueue.front().currentPage = 0;
-        // }
+    while ((!jobQueue.empty() || !running.empty()) && t < 600) {
+        while (numFree() > 4 && running.size() < 26 && jobQueue.front().arrivalTime < t) {  
+            // fill up running vector
+            running.push_back(jobQueue.front());
+            jobQueue.pop_front();
+            running.front().remainingTime = running.front().serviceTime;
+            assignPage(running.front());
+        }
+        std::sort(running.begin(), running.end(), &jobcmp); // maybe this sorting algo isnt great
+
+        for (auto it = running.begin(); it != running.end();) { // go through all running processes
+            // reserve page here
+            
+            if (it->remainingTime == 0) {   // remove all jobs that are done
+                finished.push_back(*it);
+                finished.back().finishTime = t;
+                it = running.erase(it);
+            }
+            else {
+                it->remainingTime--;
+                ++it;
+            }
+        }
+        
+
         t++;
     }
-    while (!running.empty()) {
+    // while (!running.empty()) {
 
-    }
+
+
+    //     t++;
+    // }
 
     return 0;
 }

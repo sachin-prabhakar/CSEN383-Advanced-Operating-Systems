@@ -1,12 +1,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
-#include <pthread.h>
-#include "page.h"  //Functions to run the threads on
+#include <string>
+#include "memory.h"
+#include "jobs.h"
+#include "pageTable.h"
+
 
 
 int main(int argc, char* argv[]){
-    u_int32_t seed = 0;
+    uint32_t seed = 0;
     const int numJobs = 150;
     if (argc > 2 || argc <= 0) {
         std::cout<<"USAGE: ./main [seed]"<<std::endl;
@@ -20,10 +23,10 @@ int main(int argc, char* argv[]){
         }
     }
 
-    Memory mem(seed, 100, numJobs);
-    for (auto &it : mem.jobQueue) {	// jobs that are ready but not running are waiting
-        std::cout<<it<<std::endl;
-    }
+    //Memory mem[5];
+
+    Memory mem(seed, numJobs);
+    mem.print();
 
     return 0;
 }

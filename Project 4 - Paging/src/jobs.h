@@ -1,7 +1,7 @@
 #pragma once
 #include <random>
 #include <iostream>
-
+#include <algorithm> //std::sort
 
 struct Job {
     int id;
@@ -17,26 +17,7 @@ struct Job {
     Job(uint32_t seed);
     friend std::ostream& operator<<(std::ostream& os, const Job& job);
     // int run(uint32_t seed = 42);
-};
-
-//Struct to hold each job/process
-struct JobNode {
-    Job job;
-    JobNode* next;
-    JobNode(uint32_t seed) : job(Job(seed)), next(nullptr){}
-    JobNode(Job temp) : job(temp), next(nullptr){}
-};
-
-class JobList {
-    private:
-        JobNode* head;
-    public:
-        JobList() : head(nullptr) {}
-
-        void addJob_Start(JobNode* newJob);
-        void addJob_End(JobNode* newJob);
-        void addJob_Sorted(JobNode* newJob);    // always adds job in its sorted pos
-        bool empty();
+    friend bool operator<(const Job& lhs, const Job& rhs);
 };
 
 std::vector<Job> generateJobs(uint32_t seed, int numJobs = 150);

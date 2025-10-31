@@ -2,65 +2,18 @@
 #include "pageTable.h"
 #include "jobs.h"
 
-int MemNode::nodeid = 0;  // initialize numProcs
-
-
-MemList* generateFreeList(){
-
-   MemList* tempList = new MemList;
-   int frames = tempList->getTotalFrames();
-    for (int i = 0; i < frames; i++) {
-        MemNode* tempNode = new MemNode;
-        tempList->addMem(tempNode);
-    }
-    return tempList;
-}
-
-void MemList::print() {
-    MemNode* it = head;
-    std::cout<<"\n===FREE BLOCKS===\n";
-    while (it->next != nullptr) {
-        std::cout<<it<<std::endl;
-        it = it->next;
-    }
-}
-
-std::ostream& operator<<(std::ostream& os, const MemNode& node) {
-    os<<"("<<node.start_loc<<", "<<node.end_loc<<")";
-    return os;
-}
-
-void MemList::addMem(MemNode* newNode){
-    if(head == nullptr || newNode->start_loc < head->start_loc){
-        newNode->next = head;
-        head = newNode;
-        return;
-    }
-    MemNode* curr = head;
-    while(curr != nullptr && curr->next->start_loc < newNode->start_loc){
-        curr = curr->next;
-    }
-    newNode->next = curr->next;
-    curr->next = newNode;
-}
-
-
-
 
 
 
 Memory::Memory(uint32_t seed, int numJobs) {
 
     //Linked List of available jobs
-    JobsHead = generateJobs(seed, numJobs);
+    jobQueue = generateJobs(seed, numJobs);
+    freeList = {};
+    for (int i = 0; i < 100; i++)
+        freeList.push_back(i);
 
     //List or array, etc... For page Table
-
-
-    //Linked List of avialable pages in memeory
-    FreeListHead = generateFreeList();
-
-
 
 
     // this->totalPages = frames;
@@ -84,8 +37,37 @@ Memory::Memory(uint32_t seed, int numJobs) {
     // }
 }
 
+void Memory::print() {
+    std::cout<<"====PRINTING MEM====\n";
+    for (auto &it : freeList) {
+        std::cout<<it<<", ";
+    }
+    std::cout<<std::endl;
+}
+
+int Memory::run() {
+    int t = 0;  // time slize (every 100ms)
+    while (jobQueue.empty() && !running.empty() && t < 600) {
+        // while (numFree() >= 4 && jobQueue.front().arrivalTime <= t) {
+        //     // fill up running
+        //     running.push_back(jobQueue.front());
+        //     jobQueue.pop_front();
+        //     jobQueue.front().currentPage = 0;
+        // }
+        t++;
+    }
+    while (!running.empty()) {
+
+    }
+
+    return 0;
+}
+
+
+
+
 // int Memory::run() {
-//     // for (auto &it : jobQueue) {}
+//     for (auto &it : jobQueue) {}
 //     int t = 0;  // time slice (every 100 ms)
 //     while (!jobQueue.empty() || !running.empty()) {
 //         while (numFree() >= 4 && jobQueue.front().arrival <= t) {
@@ -112,6 +94,7 @@ Memory::Memory(uint32_t seed, int numJobs) {
 //     }
 //     // should return a list of all records generated and then we can print all the records
 // }
+
 // int Job::run(uint32_t seed) {
 //     remainingTime--;
 //     std::mt19937 gen(seed);

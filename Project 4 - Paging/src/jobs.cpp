@@ -1,5 +1,6 @@
 #include "jobs.h"
 
+
 int Job::numProcs = 0;  // initialize numProcs
 
 Job::Job(uint32_t seed) {
@@ -16,58 +17,29 @@ Job::Job(uint32_t seed) {
     remainingTime = -1;  
 }
 
-void JobList::addJob_Start(JobNode* newJob){
-    newJob->next = head;
-    head = newJob;
+bool jobcmp(const Job &j1, const Job &j2) {
+    return j1.arrivalTime < j2.arrivalTime;
 }
 
-void JobList::addJob_End(JobNode* newJob){
-    if(head == nullptr){
-        head = newJob;
-        return;
-    }
-
-    JobNode* curr = head;
-    while(curr != nullptr){
-        curr = curr->next;
-    }
-
-    curr->next = newJob;
-}
-
-void JobList::addJob_Sorted(JobNode* newJob){
-    if(head == nullptr || newJob->job.arrivalTime < head->job.arrivalTime){
-        newJob->next = head;
-        head = newJob;
-        return;
-    }
-
-    JobNode* curr = head;
-    while(curr != nullptr && curr->next->job.arrivalTime < newJob->job.arrivalTime){
-        curr = curr->next;
-    }
-    newJob->next = curr->next;
-    curr->next = newJob;
-}
-
-JobList* generateJobs(uint32_t seed, int numJobs) {
-
-    JobList* tempList = new JobList;
+std::vector<Job> generateJobs(uint32_t seed, int numJobs) {
 
     std::mt19937 gen(seed);
     std::uniform_int_distribution<int> sizeDist(0, 3);
     std::uniform_int_distribution<int> serviceDist(1, 5);
     std::uniform_int_distribution<int> arrivalDist(0, 599);
     int sizes[] = {5, 11, 17, 31};
+    std::vector<Job> jobs = {};
 
     for (int i = 0; i < numJobs; i++) {
         int procSize = sizes[sizeDist(gen)];
         int arrivalTime = arrivalDist(gen);
         int serviceTime = serviceDist(gen);
-        tempList->addJob_Sorted(new JobNode(Job(procSize,serviceTime,arrivalTime)));
-    }
 
-    return tempList;
+        jobs.push_back(Job(procSize, serviceTime, arrivalTime));
+    }
+    std::sort(jobs.begin(), jobs.end(), &jobcmp);
+
+    return jobs;
 }
 
 std::ostream& operator<<(std::ostream& os, const Job& job) {
@@ -78,8 +50,10 @@ std::ostream& operator<<(std::ostream& os, const Job& job) {
 
 
 bool operator<(const Job& lhs, const Job& rhs) {
-        return lhs.arrivalTime < rhs.arrivalTime;
-    }
+    return lhs.arrivalTime < rhs.arrivalTime;
+}
+
+
 
 //std::list<Process> generateJobs(uint32_t seed, int numJobs) {
 //     std::mt19937 gen(seed);

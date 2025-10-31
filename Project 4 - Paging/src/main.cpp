@@ -23,9 +23,9 @@ int main(int argc, char* argv[]){
         }
     }
 
-    //Memory mem[5];
 
     Memory mem(seed, numJobs);
+    mem.print();
 
     return 0;
 }

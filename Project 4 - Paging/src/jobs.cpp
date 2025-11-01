@@ -1,6 +1,5 @@
 #include "jobs.h"
 
-
 int Job::numProcs = 0;  // initialize numProcs
 
 Job::Job(uint32_t seed) {
@@ -19,8 +18,14 @@ Job::Job(uint32_t seed) {
     pageTable = {};
 }
 
-bool jobcmp(const Job &j1, const Job &j2) {
-    return j1.arrivalTime < j2.arrivalTime;
+std::ostream& operator<<(std::ostream& os, const Job& job) {
+    os<<"\nPROCESS "<<job.id<<"\n\tARRIVAL\t="<<job.arrivalTime<<"\n\tSIZE=\t"<<job.procSize;
+    os<<"\n\tDUR=\t"<<job.serviceTime<<"\n\tREM=\t"<<job.remainingTime<<std::endl;
+    return os;
+}
+
+bool operator<(const Job& lhs, const Job& rhs) {
+    return lhs.arrivalTime < rhs.arrivalTime;
 }
 
 std::deque<Job> generateJobs(uint32_t seed, int numJobs) {
@@ -39,9 +44,10 @@ std::deque<Job> generateJobs(uint32_t seed, int numJobs) {
 
         jobs.push_back(Job(procSize, serviceTime, arrivalTime));
     }
-    std::sort(jobs.begin(), jobs.end(), &jobcmp);
+    std::sort(jobs.begin(), jobs.end());
 
     return jobs;
+<<<<<<< HEAD
 }
 
 std::ostream& operator<<(std::ostream& os, const Job& job) {
@@ -74,3 +80,6 @@ bool operator<(const Job& lhs, const Job& rhs) {
 
 //     return jobs;
 // }
+=======
+}
+>>>>>>> ecc10bdbd52d02f91d0a645e723c2784703cd002

@@ -1,7 +1,8 @@
 #pragma once
 #include <random>
 #include <iostream>
-
+#include <algorithm> //std::sort
+#include "pageTable.h"
 
 struct Job {
     int id;

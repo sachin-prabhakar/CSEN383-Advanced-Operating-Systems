@@ -41,7 +41,7 @@ std::deque<Job> generateJobs(uint32_t seed, int numJobs) {
     for (int i = 0; i < numJobs; i++) {
         int procSize = sizes[sizeDist(gen)];
         int arrivalTime = arrivalDist(gen);
-        int serviceTime = serviceDist(gen);
+        int serviceTime = serviceDist(gen)*10; // service time is in seconds, not 100ms
 
         jobs.push_back(Job(procSize, serviceTime, arrivalTime));
     }

@@ -1,12 +1,15 @@
 #include "memory.h"
 
 
-Memory::Memory(uint32_t seed, int numJobs) {
+Memory::Memory(uint32_t seed, int numJobs) : gen(seed) {
     jobQueue = generateJobs(seed, numJobs); // jobQueue is sorted by arrival time
     running= {};
     finished = {};
     for (auto &it : memory)   it = -1;
     pageTable = PageTable();
+
+    
+
 }
 
 int Memory::numFree() {
@@ -35,8 +38,7 @@ void Memory::print() {
 }
 
 
-int getNewVpn(const Job &job, uint32_t seed = 42) {
-    std::mt19937 gen(seed);
+int Memory::getNewVpn(const Job &job, uint32_t seed) {
     std::uniform_int_distribution<int> rdist(0, 10);
     std::uniform_int_distribution<int> ldist(-1, 1);
     std::uniform_int_distribution<int> jdist(2, job.procSize-1);
@@ -50,9 +52,19 @@ int getNewVpn(const Job &job, uint32_t seed = 42) {
 
 int Memory::assignPage(int t, Job &job, std::function<int()> replacementAlgo, uint32_t seed) { // returns ppn if successful, else -1
     int frameno = -1;
+    int newvpn = getNewVpn(job, seed);
+    if (pageTable.isValid(job.id, newvpn)) {
+        pageTable.updateAccess(job.id, newvpn, t);
+        job.currentPage = newvpn;
+        return pageTable.lookup(job.id, newvpn);
+    }
     if (numFree() == 0) {
         frameno = replacementAlgo();
-        pageTable.invalidateEntry(memory.at(frameno), getNewVpn(job, seed));
+        int invalidid = memory.at(frameno);
+        int invalidvpn = pageTable.lookup(invalidid, pageTable.getVpn(invalidid, frameno));
+
+        pageTable.invalidateEntry(invalidid, invalidvpn);
+        std::cout<<"Page Replacement ";
     }
     else if (numFree() > 0) {   // if there is at least one free frame...
         for (size_t i = 0; i < memory.size(); i++) {
@@ -63,13 +75,13 @@ int Memory::assignPage(int t, Job &job, std::function<int()> replacementAlgo, ui
         }
     }
     memory[frameno] = job.id;
-    if (job.currentPage == -1) {    // job is being run for the first time
+    if (job.currentPage == -1) {    
+        // job is being run for the first time
         job.currentPage = 0;
         pageTable.updateEntry(job.id, 0, frameno, t); // should this be updateAccess()?
     } 
     else {  // job has run before
-        int newvpn = getNewVpn(job, seed);
-        pageTable.updateAccess(job.id, newvpn, t, frameno);
+        pageTable.updateAccess(job.id, newvpn, t); // should this be updateEntry()?
         job.currentPage = newvpn;
     }
     std::cout<<"Assigning job "<<job.id<<" vpn "<<job.currentPage<<" to frame "<<frameno<<std::endl;
@@ -133,6 +145,9 @@ int Memory::run(uint32_t seed) {
     }
     std::cout<<"out of time! just finishing up all the already started procs"<<std::endl;
     while (!running.empty()) {
+        std::cout<<"t = "<<t<<std::endl;
+        printq(jobQueue);
+        printq(running);
         for (auto it = running.begin(); it != running.end();) { // go through all running processes
             if (it->remainingTime == 0) {   // remove all jobs that are done
                 finishJob(*it, t);
@@ -140,21 +155,23 @@ int Memory::run(uint32_t seed) {
                 it = running.erase(it);
             }
             else {
-                std::cout<<"HAHAHAHAHA"<<std::endl;
                 int frameno = assignPage(t, *it, [this]() { return this->findLRUVictim(); }, seed);
                 memory.at(frameno) = it->id;
                 it->remainingTime--;
                 ++it;
             }
         }
+        for (auto &it : memory) std::cout<<it<<" ";
+        std::cout<<"\n"<<std::endl;
         t++;
     }
+
+    std::cout<<"still in jobQueue proc "<<jobQueue.front().id<<" with arrivaltime= "<<jobQueue.front().arrivalTime<<std::endl;
     return 0;
 }
 
 
 int Memory::findLRUVictim() {
-    std::cout<<"LRU"<<std::endl;
     // LRU: Find the frame with the oldest (minimum) lastAccessTime
     int lruFrame = -1;
     int minAccessTime = -1;

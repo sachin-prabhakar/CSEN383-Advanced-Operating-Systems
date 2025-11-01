@@ -65,15 +65,16 @@ public:
     PageTable();
 
     void initializeProcess(int processId, int numPages);
-    int lookup(int processId, int virtualPageNumber);
+    int lookup(int processId, int virtualPageNumber);   // returns ppn
     bool isValid(int processId, int virtualPageNumber);
     void updateEntry(int processId, int virtualPageNumber, int frameNumber, int currentTime);
     void invalidateEntry(int processId, int virtualPageNumber);
-    void updateAccess(int processId, int virtualPageNumber, int currentTime, int frameNumber = -1);
+    void updateAccess(int processId, int virtualPageNumber, int currentTime);
     PageTableEntry* getEntry(int processId, int virtualPageNumber);
     void removeProcess(int processId);
     std::vector<int> getValidPages(int processId);
     int getFrameNumber(int processId, int virtualPageNumber);
     int getProcessSize(int processId);
+    int getVpn(int processId, int frameNumber);
     // int referencePage(int processId, int virtualPageNumber);
 };

@@ -15,6 +15,8 @@ struct Memory {
     std::deque<Job> finished;  // all jobs that have been finished 
     std::array<int, 100> memory;    // array of every page in mem; -1 means free, otherwise shows pid
 
+    // generators for paging
+    std::mt19937 gen;
 
     Memory(uint32_t seed, int numJobs = 150);
 
@@ -25,6 +27,7 @@ struct Memory {
     int assignPage(int t, Job &job, std::function<int()> replacementAlgo = nullptr, uint32_t seed = 42);
     void finishJob(Job &job, int t);  // helper for run()
     void startJob(int t);   // helper for run()
+    int getNewVpn(const Job &job, uint32_t seed = 42);
 
     // Page replacement algorithms
     int findLRUVictim();  // Returns frame number of LRU victim page

@@ -92,7 +92,7 @@ void PageTable::invalidateEntry(int processId, int virtualPageNumber) {
 }
 
 // if accessing page that has already been accessed before
-void PageTable::updateAccess(int processId, int virtualPageNumber, int currentTime, int frameNumber) {
+void PageTable::updateAccess(int processId, int virtualPageNumber, int currentTime) {
     if (pageTables.find(processId) == pageTables.end()) {
         return; // process not found
     }
@@ -106,7 +106,6 @@ void PageTable::updateAccess(int processId, int virtualPageNumber, int currentTi
     PageTableEntry& entry = pageTable[virtualPageNumber];
 
     if (entry.valid) {
-        entry.frameNumber = (frameNumber == -1) ? entry.frameNumber : frameNumber;  // is this okay?
         entry.referenced = true;
         entry.lastAccessTime = currentTime;
         entry.accessCount = (entry.accessCount == -1) ? 1 : entry.accessCount+1;
@@ -158,6 +157,15 @@ int PageTable::getProcessSize(int processId) {
     auto it = pageTables.find(processId);
     if (it == pageTables.end()) return 0;
     return it->second.size();
+}
+
+int PageTable::getVpn(int processId, int frameNumber) {
+    for (size_t i = 0; i < pageTables.at(processId).size(); i++) {
+        if (pageTables[processId].at(i).frameNumber == frameNumber) {
+            return i;
+        }
+    }
+    return -1;
 }
 
 

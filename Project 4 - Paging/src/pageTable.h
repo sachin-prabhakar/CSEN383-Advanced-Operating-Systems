@@ -43,7 +43,7 @@ struct PageFrame {
 
 
 struct PageTableEntry {
-    int frameNumber;        // -1 if not in memory
+    int frameNumber;        // PPN; -1 if not in memory
     bool valid;
     bool referenced;
     bool dirty;
@@ -69,9 +69,11 @@ public:
     bool isValid(int processId, int virtualPageNumber);
     void updateEntry(int processId, int virtualPageNumber, int frameNumber, int currentTime);
     void invalidateEntry(int processId, int virtualPageNumber);
-    void updateAccess(int processId, int virtualPageNumber, int currentTime);
+    void updateAccess(int processId, int virtualPageNumber, int currentTime, int frameNumber = -1);
     PageTableEntry* getEntry(int processId, int virtualPageNumber);
     void removeProcess(int processId);
     std::vector<int> getValidPages(int processId);
     int getFrameNumber(int processId, int virtualPageNumber);
+    int getProcessSize(int processId);
+    // int referencePage(int processId, int virtualPageNumber);
 };

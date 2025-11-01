@@ -1,5 +1,6 @@
 #pragma once
 #include <random>
+#include <string>
 #include <iostream>
 #include <algorithm> //std::sort
 #include "pageTable.h"
@@ -13,11 +14,13 @@ struct Job {
     static int numProcs; // id for each process
     int currentPage;
     int finishTime;
-    std::deque<int> pageTable;  // index is VPN, value is PPN
+    std::deque<PageTableEntry> pageTable;  // index is VPN, value is PPN
 
-    Job() : id(0), procSize(0), serviceTime(0), arrivalTime(0), remainingTime(0) {}
-    Job(int size, int service, int arrival) : id(++numProcs), procSize(size), serviceTime(service), arrivalTime(arrival), remainingTime(-1) {}
-    Job(uint32_t seed);
+    // Job() : id(0), procSize(0), serviceTime(0), arrivalTime(0), remainingTime(0) {}
+    Job(int size, int service, int arrival);
+    // Job(uint32_t seed);
+    std::string startRecord();
+    std::string finRecord();
     friend std::ostream& operator<<(std::ostream& os, const Job& job);
     // int run(uint32_t seed = 42);
 };

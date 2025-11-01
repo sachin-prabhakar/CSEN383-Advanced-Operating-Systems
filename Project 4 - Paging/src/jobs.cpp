@@ -2,30 +2,31 @@
 
 int Job::numProcs = 0;  // initialize numProcs
 
-Job::Job(uint32_t seed) {
-    std::mt19937 gen(seed);
-    std::uniform_int_distribution<int> sizeDist(0, 3);
-    std::uniform_int_distribution<int> serviceDist(1, 5);
-    std::uniform_int_distribution<int> arrivalDist(0, 599);
-    int sizes[] = {5, 11, 17, 31};
+// Job::Job(uint32_t seed) {
+//     std::mt19937 gen(seed);
+//     std::uniform_int_distribution<int> sizeDist(0, 3);
+//     std::uniform_int_distribution<int> serviceDist(1, 5);
+//     std::uniform_int_distribution<int> arrivalDist(0, 599);
+//     int sizes[] = {5, 11, 17, 31};
 
+//     id = ++numProcs;
+//     procSize = sizes[sizeDist(gen)];
+//     arrivalTime = arrivalDist(gen);
+//     serviceTime = serviceDist(gen);
+//     remainingTime = -1;
+//     finishTime = -1;
+//     pageTable = {};
+// }
+
+Job::Job(int size, int service, int arrival){
     id = ++numProcs;
-    procSize = sizes[sizeDist(gen)];
-    arrivalTime = arrivalDist(gen);
-    serviceTime = serviceDist(gen);
+    procSize = size;
+    serviceTime = service;
+    arrivalTime = arrival;
     remainingTime = -1;
+    currentPage = -1;
     finishTime = -1;
     pageTable = {};
-}
-
-std::ostream& operator<<(std::ostream& os, const Job& job) {
-    os<<"\nPROCESS "<<job.id<<"\n\tARRIVAL\t="<<job.arrivalTime<<"\n\tSIZE=\t"<<job.procSize;
-    os<<"\n\tDUR=\t"<<job.serviceTime<<"\n\tREM=\t"<<job.remainingTime<<std::endl;
-    return os;
-}
-
-bool operator<(const Job& lhs, const Job& rhs) {
-    return lhs.arrivalTime < rhs.arrivalTime;
 }
 
 std::deque<Job> generateJobs(uint32_t seed, int numJobs) {
@@ -47,7 +48,18 @@ std::deque<Job> generateJobs(uint32_t seed, int numJobs) {
     std::sort(jobs.begin(), jobs.end());
 
     return jobs;
-<<<<<<< HEAD
+}
+
+std::string Job::startRecord() {
+    std::string record = "Starting Process " + std::to_string(id) + " at time " + std::to_string(arrivalTime);
+    std::cout<<record<<std::endl;
+    return record;
+}
+
+std::string Job::finRecord() {
+    std::string record = "Finishing Process " + std::to_string(id) + " at time " + std::to_string(finishTime);
+    std::cout<<record<<std::endl;
+    return record;
 }
 
 std::ostream& operator<<(std::ostream& os, const Job& job) {
@@ -57,29 +69,11 @@ std::ostream& operator<<(std::ostream& os, const Job& job) {
     return os;
 }
 
+bool jobcmp(const Job &j1, const Job &j2) {
+    return j1.arrivalTime < j2.arrivalTime;
+}
 
 bool operator<(const Job& lhs, const Job& rhs) {
     return lhs.arrivalTime < rhs.arrivalTime;
 }
 
-
-
-//std::list<Process> generateJobs(uint32_t seed, int numJobs) {
-//     std::mt19937 gen(seed);
-//     std::uniform_int_distribution<int> sizeDist(0, 3);
-//     std::uniform_int_distribution<int> durDist(1, 5);
-//     std::uniform_int_distribution<int> arrivalDist(0, 599);
-//     int sizes[] = {5, 11, 17, 31};
-
-//     std::list<Process> jobs;
-
-//     for (int i = 0; i < numJobs; i++) {
-//         jobs.push_back(Process(sizes[sizeDist(gen)], durDist(gen), arrivalDist(gen)));
-//     }
-//     jobs.sort();
-
-//     return jobs;
-// }
-=======
-}
->>>>>>> ecc10bdbd52d02f91d0a645e723c2784703cd002

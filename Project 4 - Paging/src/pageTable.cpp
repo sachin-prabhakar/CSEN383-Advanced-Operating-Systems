@@ -50,6 +50,7 @@ bool PageTable::isValid(int processId, int virtualPageNumber) {
     return pageTable[virtualPageNumber].valid;
 }
 
+// for first time entry is referenced
 void PageTable::updateEntry(int processId, int virtualPageNumber, int frameNumber, int currentTime) {
 
     if (pageTables.find(processId) == pageTables.end()) {
@@ -68,10 +69,10 @@ void PageTable::updateEntry(int processId, int virtualPageNumber, int frameNumbe
     entry.referenced = true;
     entry.loadTime = currentTime;
     entry.lastAccessTime = currentTime;
-    entry.accessCount = 1;
+    entry.accessCount = 1;  // should this be ++?
 }
 
-
+// gets page out of memory
 void PageTable::invalidateEntry(int processId, int virtualPageNumber) {
 
     if (pageTables.find(processId) == pageTables.end()) {
@@ -90,8 +91,8 @@ void PageTable::invalidateEntry(int processId, int virtualPageNumber) {
     entry.referenced = false;
 }
 
-void PageTable::updateAccess(int processId, int virtualPageNumber, int currentTime) {
-
+// if accessing page that has already been accessed before
+void PageTable::updateAccess(int processId, int virtualPageNumber, int currentTime, int frameNumber) {
     if (pageTables.find(processId) == pageTables.end()) {
         return; // process not found
     }
@@ -105,9 +106,10 @@ void PageTable::updateAccess(int processId, int virtualPageNumber, int currentTi
     PageTableEntry& entry = pageTable[virtualPageNumber];
 
     if (entry.valid) {
+        entry.frameNumber = (frameNumber == -1) ? entry.frameNumber : frameNumber;  // is this okay?
         entry.referenced = true;
         entry.lastAccessTime = currentTime;
-        entry.accessCount++;
+        entry.accessCount = (entry.accessCount == -1) ? 1 : entry.accessCount+1;
     }
 }
 
@@ -151,3 +153,12 @@ std::vector<int> PageTable::getValidPages(int processId) {
 int PageTable::getFrameNumber(int processId, int virtualPageNumber) {
     return lookup(processId, virtualPageNumber);
 }
+
+int PageTable::getProcessSize(int processId) {
+    auto it = pageTables.find(processId);
+    if (it == pageTables.end()) return 0;
+    return it->second.size();
+}
+
+
+// update entry vs update access?

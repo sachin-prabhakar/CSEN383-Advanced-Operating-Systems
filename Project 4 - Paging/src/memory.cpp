@@ -65,14 +65,11 @@ int Memory::assignPage(int t, Job &job, std::function<int()> replacementAlgo, ui
     if (job.currentPage == -1) {    // job is being run for the first time
         job.currentPage = 0;
         pageTable.updateEntry(job.id, 0, frameno, t); // should this be updateAccess()?
-        return frameno;  
     } 
     else {  // job has run before
         pageTable.updateAccess(job.id, getNewVpn(job, seed), t, frameno);
     }
-    
-    return -1;
-    
+    return frameno;  
 }
 
 void Memory::finishJob(Job &job, int t) {
@@ -92,7 +89,7 @@ void Memory::startJob(int t) {
     running.back().startRecord();
 } 
 
-int Memory::run(std::function<int()> replacementAlgo, uint32_t seed) {
+int Memory::run(uint32_t seed) {
     int t = 0;  // time slize (every 100ms)
     while ((!jobQueue.empty() || !running.empty()) && t < 600) {
         std::cout<<"t = "<<t<<std::endl;
@@ -110,15 +107,13 @@ int Memory::run(std::function<int()> replacementAlgo, uint32_t seed) {
                 it = running.erase(it);
             }
             else {
-                int frameno = -1;
-                frameno = assignPage(t, *it, [this]() { return this->findLRUVictim(); }, seed);
-                std::cout<<frameno<<std::endl;
+                int frameno = assignPage(t, *it, [this]() { return this->findLRUVictim(); }, seed);
                 memory.at(frameno) = it->id;
                 it->remainingTime--;
                 ++it;
             }
         }
-        for (auto &it : memory) std::cout<<it;
+        for (auto &it : memory) std::cout<<it<<" ";
         std::cout<<std::endl;
         t++;
     }
@@ -129,10 +124,8 @@ int Memory::run(std::function<int()> replacementAlgo, uint32_t seed) {
                 it = running.erase(it);
             }
             else {
-                if (pageTable.getProcessSize(it->id) < it->procSize) {  // reserve page here
-                    int frameno = assignPage(t, *it, [this]() { return this->findLRUVictim(); }, seed);
-                    memory.at(frameno) = it->id;
-                }
+                int frameno = assignPage(t, *it, [this]() { return this->findLRUVictim(); }, seed);
+                memory.at(frameno) = it->id;
                 it->remainingTime--;
                 ++it;
             }

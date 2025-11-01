@@ -51,13 +51,16 @@ std::deque<Job> generateJobs(uint32_t seed, int numJobs) {
 }
 
 std::string Job::startRecord() {
-    std::string record = "Starting Process " + std::to_string(id) + " at time " + std::to_string(arrivalTime);
+    std::string record = "START PROC #" + std::to_string(id) + " (time, dur, size) = (" + 
+        std::to_string(arrivalTime) + ", " + std::to_string(serviceTime) + ", " + 
+        std::to_string(procSize) + ")";
     std::cout<<record<<std::endl;
     return record;
 }
 
 std::string Job::finRecord() {
-    std::string record = "Finishing Process " + std::to_string(id) + " at time " + std::to_string(finishTime);
+    std::string record = "END PROC #" + std::to_string(id) + " (time, size) = (" + 
+        std::to_string(finishTime) + ", " + std::to_string(procSize) + ")";
     std::cout<<record<<std::endl;
     return record;
 }

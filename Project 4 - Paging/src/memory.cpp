@@ -44,6 +44,7 @@ int getNewVpn(const Job &job, uint32_t seed = 42) {
     int vpn;    // virtual page number
     if (r < 7) vpn = ldist(gen)%job.procSize;
     else vpn = jdist(gen)%job.procSize;
+    if (vpn < 0) vpn = job.procSize+vpn;
     return vpn;
 }
 
@@ -67,8 +68,11 @@ int Memory::assignPage(int t, Job &job, std::function<int()> replacementAlgo, ui
         pageTable.updateEntry(job.id, 0, frameno, t); // should this be updateAccess()?
     } 
     else {  // job has run before
-        pageTable.updateAccess(job.id, getNewVpn(job, seed), t, frameno);
+        int newvpn = getNewVpn(job, seed);
+        pageTable.updateAccess(job.id, newvpn, t, frameno);
+        job.currentPage = newvpn;
     }
+    std::cout<<"Assigning job "<<job.id<<" vpn "<<job.currentPage<<" to frame "<<frameno<<std::endl;
     return frameno;  
 }
 
@@ -89,21 +93,31 @@ void Memory::startJob(int t) {
     running.back().startRecord();
 } 
 
+void printq(std::deque<Job> q) {
+    std::cout<<"printing deque: ";
+    for (auto &it : q) {
+        std::cout<<it.id<<" ";
+    }
+    std::cout<<std::endl;
+}
+
 int Memory::run(uint32_t seed) {
     int t = 0;  // time slize (every 100ms)
     while ((!jobQueue.empty() || !running.empty()) && t < 600) {
         std::cout<<"t = "<<t<<std::endl;
+        printq(jobQueue);
+        printq(running);
         while (!jobQueue.empty() && numFree() > 4 && running.size() < 26 && jobQueue.front().arrivalTime <= t) {  
-            // fill up running vector with all jobs from jobQue that have arrived
-            std::cout<<"moving process "<<jobQueue.front().id<<" to the running list"<<std::endl;
+            // fill up running queue with all jobs from jobQue that have arrived
+            // this doesn't work if we arent clearing out finished jobs
             startJob(t);
         }
         std::sort(running.begin(), running.end(), &jobcmp); // maybe this sorting algo isnt great
 
         for (auto it = running.begin(); it != running.end();) { // go through all running processes
-            std::cout<<"checking process "<<it->id<<std::endl;
             if (it->remainingTime == 0) {   // remove all jobs that are done
                 finishJob(*it, t);
+                pageTable.removeProcess(it->id);
                 it = running.erase(it);
             }
             else {
@@ -114,16 +128,19 @@ int Memory::run(uint32_t seed) {
             }
         }
         for (auto &it : memory) std::cout<<it<<" ";
-        std::cout<<std::endl;
+        std::cout<<"\n"<<std::endl;
         t++;
     }
+    std::cout<<"out of time! just finishing up all the already started procs"<<std::endl;
     while (!running.empty()) {
         for (auto it = running.begin(); it != running.end();) { // go through all running processes
             if (it->remainingTime == 0) {   // remove all jobs that are done
                 finishJob(*it, t);
+                pageTable.removeProcess(it->id);
                 it = running.erase(it);
             }
             else {
+                std::cout<<"HAHAHAHAHA"<<std::endl;
                 int frameno = assignPage(t, *it, [this]() { return this->findLRUVictim(); }, seed);
                 memory.at(frameno) = it->id;
                 it->remainingTime--;

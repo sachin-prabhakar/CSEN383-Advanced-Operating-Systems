@@ -24,7 +24,8 @@ struct Memory {
     //Core memory management functions
     int numFree();     // returns number of free pages
     void print();
-    int run(uint32_t seed = 42);
+    void printFinished();
+    int run(std::function<int()> replacementAlgo, uint32_t seed = 42);
     int assignPage(int t, Job &job, std::function<int()> replacementAlgo = nullptr, uint32_t seed = 42);
     void finishJob(Job &job, int t);  // helper for run()
     void startJob(int t);   // helper for run()
@@ -33,4 +34,8 @@ struct Memory {
     // Page replacement algorithms
     int findLRUVictim();  // Returns frame number of LRU victim page
     int findFIFOVictim(); // Returns frame number of FIFO victim page
+    int findLFUVictim();  // Returns frame number of LFU victim page
+    int findMFUVictim();  // Returns frame number of MFU victim page
+
+
 };

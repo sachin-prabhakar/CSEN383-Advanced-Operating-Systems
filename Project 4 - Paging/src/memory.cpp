@@ -8,8 +8,6 @@ Memory::Memory(uint32_t seed, int numJobs) : gen(seed) {
     for (auto &it : memory)   it = -1;
     pageTable = PageTable();
 
-    
-
 }
 
 int Memory::numFree() {
@@ -113,7 +111,7 @@ void printq(std::deque<Job> q) {
     std::cout<<std::endl;
 }
 
-int Memory::run(uint32_t seed) {
+int Memory::run(std::function<int()> replacementAlgo, uint32_t seed) {
     int t = 0;  // time slize (every 100ms)
     while ((!jobQueue.empty() || !running.empty()) && t < 600) {
         std::cout<<"t = "<<t<<std::endl;
@@ -133,7 +131,7 @@ int Memory::run(uint32_t seed) {
                 it = running.erase(it);
             }
             else {
-                int frameno = assignPage(t, *it, [this]() { return this->findLRUVictim(); }, seed);
+                int frameno = assignPage(t, *it, [this]() { return this->findLFUVictim(); }, seed);
                 memory.at(frameno) = it->id;
                 it->remainingTime--;
                 ++it;
@@ -155,7 +153,7 @@ int Memory::run(uint32_t seed) {
                 it = running.erase(it);
             }
             else {
-                int frameno = assignPage(t, *it, [this]() { return this->findLRUVictim(); }, seed);
+                int frameno = assignPage(t, *it, replacementAlgo, seed);
                 memory.at(frameno) = it->id;
                 it->remainingTime--;
                 ++it;
@@ -170,114 +168,9 @@ int Memory::run(uint32_t seed) {
     return 0;
 }
 
-
-int Memory::findLRUVictim() {
-    // LRU: Find the frame with the oldest (minimum) lastAccessTime
-    int lruFrame = -1;
-    int minAccessTime = -1;
-    bool foundValidAccessTime = false;
-    
-    // Scan through all frames in memory
-    for (size_t frameNum = 0; frameNum < memory.size(); frameNum++) {
-        const int pid = memory[frameNum];
-        
-        // Skip free frames (processId == -1 means frame is free)
-        if (pid == -1) {
-            continue;
-        }
-        
-        // Get the corresponding PTE using processId and pageNumber from frame
-        PageTableEntry* pte = pageTable.getEntry(pid, pageTable.getVpn(pid,frameNum));
-        
-        if (pte == nullptr || !pte->valid) {
-            // This shouldn't happen if memory is consistent, but handling it either way
-            continue;
-        }
-        
-        // For LRU, we want the frame with minimum lastAccessTime
-        // If lastAccessTime is valid (not -1), use it for comparison
-        if (pte->lastAccessTime != -1) {
-            if (!foundValidAccessTime || pte->lastAccessTime < minAccessTime) {
-                lruFrame = frameNum;
-                minAccessTime = pte->lastAccessTime;
-                foundValidAccessTime = true;
-            }
-        } else if (!foundValidAccessTime) {
-            // If we haven't found any frame with valid access time yet,
-            // use this frame as candidate (though lastAccessTime is -1)
-            // This handles edge cases where pages haven't been accessed yet
-            if (lruFrame == -1) {
-                lruFrame = frameNum;
-            }
-        }
+void Memory::printFinished() {
+    std::cout<<"PRINTING FINISHED JOBS\nid\tat\tsize\tst\tft"<<std::endl;
+    for (auto &it : finished) {
+        std::cout<<it.id<<"\t"<<it.arrivalTime<<"\t"<<it.procSize<<"\t"<<it.serviceTime<<"\t"<<it.finishTime<<std::endl;
     }
-    
-    // If no valid frame found (all frames are free), return -1
-    // Otherwise return the LRU frame (or first occupied frame if no valid access times found)
-    if (lruFrame == -1) {
-        // Fallback: find first occupied frame (shouldn't happen if memory is full)
-        for (size_t frameNum = 0; frameNum < memory.size(); frameNum++) {
-            if (memory[frameNum] != -1) {
-                lruFrame = frameNum;
-                break;
-            }
-        }
-    }
-    return lruFrame;
-}
-
-int Memory::findFIFOVictim(){
-    std::cout<<"FIFO"<<std::endl;
-    // FIFO: Find the oldest frame (first one to be added)
-    int FIFOFrame = -1;
-    int minloadTime = -1;
-    bool foundValidloadTime = false;
-    
-    // Scan through all frames in memory
-    for (size_t frameNum = 0; frameNum < memory.size(); frameNum++) {
-        const int pid = memory[frameNum];
-        
-        // Skip free frames (processId == -1 means frame is free)
-        if (pid == -1) {
-            continue;
-        }
-        
-        // Get the corresponding PTE using processId and pageNumber from frame
-        PageTableEntry* pte = pageTable.getEntry(pid,  pageTable.getVpn(pid,frameNum));
-        
-        if (pte == nullptr || !pte->valid) {
-            // This shouldn't happen if memory is consistent, but handling it either way
-            continue;
-        }
-        
-        // For FIFO, we want the frame with smallest (oldest) loadTime
-        // If loadTime is valid (not -1), use it for comparison
-        if (pte->loadTime != -1) {
-            if (!foundValidloadTime || pte->loadTime < minloadTime) {
-                FIFOFrame = frameNum;
-                minloadTime = pte->loadTime;
-                foundValidloadTime = true;
-            }
-        } else if (!foundValidloadTime) {
-            // If we haven't found any frame with valid load time yet,
-            // use this frame as candidate (though loadTime is -1)
-            // This handles edge cases where pages haven't been accessed yet
-            if (FIFOFrame == -1) {
-                FIFOFrame = frameNum;
-            }
-        }
-    }
-    
-    // If no valid frame found (all frames are free), return -1
-    // Otherwise return the FIFO frame (or first occupied frame if no valid load times found)
-    if (FIFOFrame == -1) {
-        // Fallback: find first occupied frame (shouldn't happen if memory is full)
-        for (size_t frameNum = 0; frameNum < memory.size(); frameNum++) {
-            if (memory[frameNum] != -1) {
-                FIFOFrame = frameNum;
-                break;
-            }
-        }
-    }
-    return FIFOFrame;
 }

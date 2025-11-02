@@ -5,6 +5,7 @@
 #include <queue>
 #include <deque>
 #include <array>
+#include <functional>
 #include "pageTable.h"
 #include "jobs.h"
 

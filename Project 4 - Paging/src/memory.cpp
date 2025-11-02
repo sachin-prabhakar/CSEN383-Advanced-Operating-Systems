@@ -187,7 +187,7 @@ int Memory::findLRUVictim() {
         }
         
         // Get the corresponding PTE using processId and pageNumber from frame
-        PageTableEntry* pte = pageTable.getEntry(pid, frameNum);
+        PageTableEntry* pte = pageTable.getEntry(pid, pageTable.getVpn(pid,frameNum));
         
         if (pte == nullptr || !pte->valid) {
             // This shouldn't happen if memory is consistent, but handling it either way
@@ -243,7 +243,7 @@ int Memory::findFIFOVictim(){
         }
         
         // Get the corresponding PTE using processId and pageNumber from frame
-        PageTableEntry* pte = pageTable.getEntry(pid, frameNum);
+        PageTableEntry* pte = pageTable.getEntry(pid,  pageTable.getVpn(pid,frameNum));
         
         if (pte == nullptr || !pte->valid) {
             // This shouldn't happen if memory is consistent, but handling it either way

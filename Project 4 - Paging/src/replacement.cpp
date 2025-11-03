@@ -1,7 +1,7 @@
 #include "memory.h"
 
 
-int Memory::findLRUVictim() {
+int Memory::findLRUVictim(int vpn) {
     // LRU: Find the frame with the oldest (minimum) lastAccessTime
     int lruFrame = -1;
     int minAccessTime = -1;
@@ -17,7 +17,7 @@ int Memory::findLRUVictim() {
         }
         
         // Get the corresponding PTE using processId and pageNumber from frame
-        PageTableEntry* pte = pageTable.getEntry(pid, pageTable.getVpn(pid,frameNum));
+        PageTableEntry* pte = pageTable.getEntry(pid, vpn);
         
         if (pte == nullptr || !pte->valid) {
             // This shouldn't happen if memory is consistent, but handling it either way
@@ -56,7 +56,7 @@ int Memory::findLRUVictim() {
     return lruFrame;
 }
 
-int Memory::findFIFOVictim(){
+int Memory::findFIFOVictim(int vpn){
     std::cout<<"FIFO"<<std::endl;
     // FIFO: Find the oldest frame (first one to be added)
     int FIFOFrame = -1;
@@ -73,7 +73,7 @@ int Memory::findFIFOVictim(){
         }
         
         // Get the corresponding PTE using processId and pageNumber from frame
-        PageTableEntry* pte = pageTable.getEntry(pid,  pageTable.getVpn(pid,frameNum));
+        PageTableEntry* pte = pageTable.getEntry(pid,  vpn);
         
         if (pte == nullptr || !pte->valid) {
             // This shouldn't happen if memory is consistent, but handling it either way
@@ -112,7 +112,7 @@ int Memory::findFIFOVictim(){
     return FIFOFrame;
 }
 
-int Memory::findLFUVictim() {
+int Memory::findLFUVictim(int vpn) {
     // LFU: Find the frame with the lowest accessCount
     int lfuFrame = -1;
     int minAccessCount = -1;
@@ -128,7 +128,7 @@ int Memory::findLFUVictim() {
         }
         
         // Get the corresponding PTE using processId and pageNumber from frame
-        PageTableEntry* pte = pageTable.getEntry(pid, pageTable.getVpn(pid,frameNum));
+        PageTableEntry* pte = pageTable.getEntry(pid, vpn);
         
         if (pte == nullptr || !pte->valid) {
             // This shouldn't happen if memory is consistent, but handling it either way
@@ -168,7 +168,7 @@ int Memory::findLFUVictim() {
 }
 
 
-int Memory::findMFUVictim() {
+int Memory::findMFUVictim(int vpn) {
     // MFU: Find the frame with the highest accessCount
     int mfuFrame = -1;
     int maxAccessCount = -1;
@@ -184,7 +184,7 @@ int Memory::findMFUVictim() {
         }
         
         // Get the corresponding PTE using processId and pageNumber from frame
-        PageTableEntry* pte = pageTable.getEntry(pid, pageTable.getVpn(pid,frameNum));
+        PageTableEntry* pte = pageTable.getEntry(pid, vpn);
         
         if (pte == nullptr || !pte->valid) {
             // This shouldn't happen if memory is consistent, but handling it either way
@@ -223,7 +223,7 @@ int Memory::findMFUVictim() {
     return mfuFrame;
 }
 
-int Memory::findRandomVictim() {
+int Memory::findRandomVictim(int vpn) {
     // Random: Select a random frame that is currently occupied
     std::vector<int> occupiedFrames;
 

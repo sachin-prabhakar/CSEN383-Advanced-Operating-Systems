@@ -7,7 +7,7 @@ Memory::Memory(uint32_t seed, int numJobs) : gen(seed) {
     finished = {};
     for (auto &it : memory)   it = -1;
     pageTable = PageTable();
-
+    log = Log();
 }
 
 int Memory::numFree() {
@@ -48,16 +48,18 @@ int Memory::getNewVpn(const Job &job, uint32_t seed) {
     return vpn;
 }
 
-int Memory::assignPage(int t, Job &job, std::function<int()> replacementAlgo, uint32_t seed) { // returns ppn if successful, else -1
+int Memory::assignPage(int t, Job &job, std::function<int(int)> replacementAlgo, uint32_t seed) { // returns ppn if successful, else -1
     int frameno = -1;
     int newvpn = getNewVpn(job, seed);
     if (pageTable.isValid(job.id, newvpn)) {
         pageTable.updateAccess(job.id, newvpn, t);
         job.currentPage = newvpn;
+        log.newentry(job.id, t, 0);
         return pageTable.lookup(job.id, newvpn);
     }
     if (numFree() == 0) {
-        frameno = replacementAlgo();
+        log.newentry(job.id, t, 1);
+        frameno = replacementAlgo(newvpn);
         int invalidid = memory.at(frameno);
         int invalidvpn = pageTable.lookup(invalidid, pageTable.getVpn(invalidid, frameno));
 
@@ -73,16 +75,17 @@ int Memory::assignPage(int t, Job &job, std::function<int()> replacementAlgo, ui
         }
     }
     memory[frameno] = job.id;
-    if (job.currentPage == -1) {    
+    if (job.currentPage == -1) {
         // job is being run for the first time
         job.currentPage = 0;
-        pageTable.updateEntry(job.id, 0, frameno, t); // should this be updateAccess()?
+        pageTable.updateEntry(job.id, 0, frameno, t);
     } 
     else {  // job has run before
-        pageTable.updateAccess(job.id, newvpn, t); // should this be updateEntry()?
+        pageTable.updateAccess(job.id, newvpn, t);
         job.currentPage = newvpn;
     }
     std::cout<<"Assigning job "<<job.id<<" vpn "<<job.currentPage<<" to frame "<<frameno<<std::endl;
+    log.newentry(job.id, t, 0);
     return frameno;  
 }
 
@@ -111,7 +114,7 @@ void printq(std::deque<Job> q) {
     std::cout<<std::endl;
 }
 
-int Memory::run(std::function<int()> replacementAlgo, uint32_t seed) {
+int Memory::run(std::function<int(int)> replacementAlgo, uint32_t seed) {
     int t = 0;  // time slize (every 100ms)
     while ((!jobQueue.empty() || !running.empty()) && t < 600) {
         std::cout<<"t = "<<t<<std::endl;
@@ -131,7 +134,7 @@ int Memory::run(std::function<int()> replacementAlgo, uint32_t seed) {
                 it = running.erase(it);
             }
             else {
-                int frameno = assignPage(t, *it, [this]() { return this->findLFUVictim(); }, seed);
+                int frameno = assignPage(t, *it, replacementAlgo, seed);
                 memory.at(frameno) = it->id;
                 it->remainingTime--;
                 ++it;

@@ -27,12 +27,12 @@ int main(int argc, char* argv[]){
     std::string algcode = argv[1];
     Memory mem(seed, numJobs); 
 
-    std::function<int()> algo;
-    if      (algcode == "lru") algo = [&mem]() { return mem.findLRUVictim(); };
-    else if (algcode == "lfu") algo = [&mem]() { return mem.findLFUVictim(); };
-    else if (algcode == "mfu") algo = [&mem]() { return mem.findMFUVictim(); };
-    else if (algcode == "fifo") algo = [&mem]() { return mem.findFIFOVictim(); };
-    else if (algcode == "rand") algo = [&mem]() { return mem.findRandomVictim(); };
+    std::function<int(int)> algo;
+    if      (algcode == "lru") algo = [&mem](int vpn) { return mem.findLRUVictim(vpn); };
+    else if (algcode == "lfu") algo = [&mem](int vpn) { return mem.findLFUVictim(vpn); };
+    else if (algcode == "mfu") algo = [&mem](int vpn) { return mem.findMFUVictim(vpn); };
+    else if (algcode == "fifo") algo = [&mem](int vpn) { return mem.findFIFOVictim(vpn); };
+    else if (algcode == "rand") algo = [&mem](int vpn) { return mem.findRandomVictim(vpn); };
 
     else {
         std::cout<<"Please enter valid algorithm"<<std::endl;
@@ -41,6 +41,7 @@ int main(int argc, char* argv[]){
 
     mem.run(algo);
     mem.printFinished();
+    mem.log.print();
 
     return 0;
 }

@@ -14,7 +14,7 @@ int main(int argc, char* argv[]){
         std::cout<<"USAGE: ./main algo [seed]"<<std::endl;
         std::cout<<"seed<=0 -> random seed\n";
         std::cout<<"no seed -> seed=0\n";
-        std::cout<<"algos: lru, lfu, mfu, rand\n";
+        std::cout<<"algos: lru, lfu, mfu, fifo, rand\n";
         return 1;
     }
     else if (argc == 3) {
@@ -31,6 +31,9 @@ int main(int argc, char* argv[]){
     if      (algcode == "lru") algo = [&mem]() { return mem.findLRUVictim(); };
     else if (algcode == "lfu") algo = [&mem]() { return mem.findLFUVictim(); };
     else if (algcode == "mfu") algo = [&mem]() { return mem.findMFUVictim(); };
+    else if (algcode == "fifo") algo = [&mem]() { return mem.findFIFOVictim(); };
+    else if (algcode == "rand") algo = [&mem]() { return mem.findRandomVictim(); };
+
     else {
         std::cout<<"Please enter valid algorithm"<<std::endl;
         return 1;

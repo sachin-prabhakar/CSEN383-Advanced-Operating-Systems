@@ -222,3 +222,25 @@ int Memory::findMFUVictim() {
     }
     return mfuFrame;
 }
+
+int Memory::findRandomVictim() {
+    // Random: Select a random frame that is currently occupied
+    std::vector<int> occupiedFrames;
+
+    // Collect indices of all occupied frames
+    for (size_t frameNum = 0; frameNum < memory.size(); frameNum++) {
+        if (memory[frameNum] != -1) { // occupied frame
+            occupiedFrames.push_back(frameNum);
+        }
+    }
+
+    // If no occupied frames, return -1
+    if (occupiedFrames.empty()) {
+        return -1;
+    }
+
+    std::uniform_int_distribution<int> dist(0, occupiedFrames.size() - 1);
+    int randomIndex = dist(gen);
+
+    return occupiedFrames[randomIndex];
+}

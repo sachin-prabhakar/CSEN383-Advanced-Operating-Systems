@@ -36,6 +36,6 @@ struct Memory {
     int findFIFOVictim(); // Returns frame number of FIFO victim page
     int findLFUVictim();  // Returns frame number of LFU victim page
     int findMFUVictim();  // Returns frame number of MFU victim page
-
+    int findRandomVictim();  // Returns frame number of a random victim page
 
 };

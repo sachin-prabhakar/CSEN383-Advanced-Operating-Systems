@@ -6,9 +6,7 @@
 #include <sys/wait.h>
 #include <string.h>
 #include <iostream>
-#include <fcntl.h>
 #include <errno.h>
-#include <limits>
 
 #define BUFFER_SIZE 64
 #define NUM_PROC 5
@@ -158,6 +156,7 @@ int main(){
                         perror("Failed to write to pipe");
                         break;
                     }
+                    messageNum++;
 
                 ------------------------------------------------------------------------*/
                 }
@@ -186,6 +185,7 @@ int main(){
                                     perror("Failed to write to pipe");
                                     break;
                                 }
+                                messageNum++;
 
                             ------------------------------------------------------------------------*/   
                         }else{
@@ -195,6 +195,7 @@ int main(){
                         }
                     }else{
                         perror("Failed to open /dev/tty properly");
+                        exit(EXIT_FAILURE);
                     }
                     //  Sleep for .5 seconds
                     usleep(500000);

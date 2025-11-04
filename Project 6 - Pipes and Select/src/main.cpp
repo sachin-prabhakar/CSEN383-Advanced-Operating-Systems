@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <string.h>
 #include <iostream>
 #include <fcntl.h>
@@ -222,6 +223,7 @@ int main(){
     ------------------------------------*/
 
 
+    
 
     //  Step 4 - Close remaining file descriptors
     for(int i=0; i<NUM_PROC; i++){
@@ -233,6 +235,10 @@ int main(){
         perror("Error closing file");
         exit(EXIT_FAILURE);
     } 
+
+    for(int i=0; i<NUM_PROC; i++){
+        waitpid(pids[i],NULL,0);
+    }
 
     return 1;
 

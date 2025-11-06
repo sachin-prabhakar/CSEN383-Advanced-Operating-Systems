@@ -157,7 +157,7 @@ int main(){
                 //  Process 0-3 sends simple message
                 if(i != 4){
                     //  Print the formatted message to the msg buffer
-                    snprintf(msg, sizeof(msg), "%s: Child %d message #%d\0",formattedTime, i, messageNum);  
+                    snprintf(msg, sizeof(msg), "%s: Child %d message #%d\n",formattedTime, i, messageNum);
 
                     //  Write the msg buffer to the write end of the pipe
                     if(write(write_fd, msg, strlen(msg)) == -1){
@@ -194,7 +194,7 @@ int main(){
                                 userInput[length-1] = '\0';
                             }
                             //  Print the formatted message to the msg buffer
-                            snprintf(msg, sizeof(msg), "%s: Child %d:  %s",formattedTime, i, userInput);
+                            snprintf(msg, sizeof(msg), "%s: Child %d:  %s\n",formattedTime, i, userInput);
 
                                 //  Write the msg buffer to the write end of the pipe 
                                 if(write(write_fd, msg, strlen(msg)) == -1){

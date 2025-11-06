@@ -8,30 +8,29 @@
 #include <iostream>
 #include <errno.h>
 
-#define BUFFER_SIZE 64
+#define BUFFER_SIZE 128
 #define NUM_PROC 5
-#define TIMEOPEN 30
+#define TIMEOPEN 5
 
+//  Struct used to hold pipe and child process details
 struct pipeConnection{
     int read_fd;
     int write_fd;
     pid_t pid;
 };
 
+//  Struct used to calculate time info of Process
 struct timeResult{
     char formatted[16];
     double alive;
 };
 
 /*
-
 Function will calculate the current time and use the start time passed in
 to calculate two different quantitieis:
 
     time alive: the elapsed time the child process has been running for
-    formatted time: a formatted string that tracks time process has been alive for
-                    written in the formatin 00:00.000
-
+    formatted time: a formatted string that tracks the time a process has been alive for written in the formatin 00:00.000
 */
 timeResult getTimeValues(struct timeval start){
 
@@ -48,6 +47,7 @@ timeResult getTimeValues(struct timeval start){
     //  Format time to be mm:ss.msec
     int sec = currentTime.tv_sec - start.tv_sec;
     int msec = currentTime.tv_usec - start.tv_usec;
+    //  If msec is negative, borrow a second to increase msec.
     if(msec < 0){
         sec --;
         msec += 1000000;
@@ -79,13 +79,15 @@ int main(){
         exit(EXIT_FAILURE);
     }
 
-    //  Step 1 - Initialize 5 pipes
+    //  Step 1 - Initialize 5 pipes and save them to the struct array
     for(int i=0; i<NUM_PROC; i++){
         int fd[2];
+        //  pipe(fd) creates the pipe and file descriptors
         if(pipe(fd) == -1){
             perror("Pipe creation failed");
             exit(EXIT_FAILURE);
         }
+        //  save the file descriptors to the struct
         pipes[i].read_fd = fd[0];
         pipes[i].write_fd = fd[1];
     }
@@ -94,10 +96,10 @@ int main(){
     struct timeval startTime;
     gettimeofday(&startTime, NULL);
 
-    //  Print paremt is creating children
+    //  Print parent is creating children
     std::cout<<"Parent: "<<getpid()<<" opening communication channels for "<<TIMEOPEN<<" seconds."<<std::endl;
 
-    //  Step 2 - Fork 5 child processes
+    //  Step 2 - Fork 5 child processes - This is the main section of the code where child processes write to their pipes
     for(int i=0; i<NUM_PROC; i++){
         pids[i] = fork();
 
@@ -106,11 +108,12 @@ int main(){
             exit(EXIT_FAILURE);
         }
 
-        //  Child Process
+        //  Child Process runs here
         if(pids[i] == 0){
+            //  Save process id to the struct
             pipes[i].pid = getpid();
 
-            //  Close output file pointer since children don't need to access it
+            //  Close file pointer to output file since children don't need to access it
             fclose(output);
 
             //  Close all other available pipes except this child's write pipe
@@ -125,7 +128,12 @@ int main(){
             int write_fd = pipes[i].write_fd;
             int messageNum = 1;
 
-            //  Endless loop will exit after 30 seconds
+            /*
+            
+                This while loop runs each child process for 30 seconds.  Depending on the type of the child, it will either
+                read input from stdin and send this to the parent or it will send a simple message to the parent.
+            
+            */
             while(1){
                 //  Call function to get timeAlive and formattedTime for child process
                 timeResult time = getTimeValues(startTime);
@@ -138,7 +146,7 @@ int main(){
                     usleep(sleepTime * 1000000);
                 }
 
-                //  Check if child process has been alive for 30 seconds
+                //  Check if child process has been alive for 30 seconds and if it has, kill it.
                 if(timeAlive > TIMEOPEN){
                     break;
                 }
@@ -146,66 +154,75 @@ int main(){
                 //  Message buffer for child process
                 char msg[BUFFER_SIZE];
 
-                //  Process sends simple message
+                //  Process 0-3 sends simple message
                 if(i != 4){
-                    snprintf(msg, sizeof(msg), "%s: Child %d message #%d",formattedTime, i, messageNum);  
-                /*------------------------------------------------------------------------
+                    //  Print the formatted message to the msg buffer
+                    snprintf(msg, sizeof(msg), "%s: Child %d message #%d\0",formattedTime, i, messageNum);  
 
-                    //  ------------- Uncomment when reading is impmeneted ------------- 
+                    //  Write the msg buffer to the write end of the pipe
                     if(write(write_fd, msg, strlen(msg)) == -1){
                         perror("Failed to write to pipe");
                         break;
                     }
                     messageNum++;
-
-                ------------------------------------------------------------------------*/
                 }
 
-                //  Process takes user input
+                //  Process 4 takes user input
                 if(i == 4){
                 /*
                     To fix EIO occuring when a background child process attempts to read 
-                    from terminal we need to give the child access to the main terminal.
+                    from terminal we need to give the child access to the controlling terminal.
+
+                    This was implemented due to an initial bug when an EIO error was thrown when
+                    the child tried to access terminal.  Further testing indicates that the error
+                    may have occured due to the parent exiting prematurely.  Since fopen("/dev/tty", "r")
+                    is not harmful, leaving it in.
                 */
                     FILE *tty_fd = fopen("/dev/tty", "r");
                     if(tty_fd){
-                        char userInput[BUFFER_SIZE-40];
+                        //  Buffer to store the user input from stdin
+                        char userInput[BUFFER_SIZE-56];
+
+                        //  Prompt user to enter a string
                         std::cout<<"Child 5: Please enter a string and press Enter: ";
+
+                        //  If the input is successfully retrieved from terminal:
                         if(fgets(userInput, sizeof(userInput), tty_fd)){
                             //  Change newline char to null terminator to avoid formatting issues in buffer.
                             size_t length = strlen(userInput);
                             if(length > 0 && userInput[length-1] == '\n'){
                                 userInput[length-1] = '\0';
                             }
+                            //  Print the formatted message to the msg buffer
                             snprintf(msg, sizeof(msg), "%s: Child %d:  %s",formattedTime, i, userInput);
-                             /*------------------------------------------------------------------------
 
-                                //  ------------- Uncomment when reading is impmeneted ------------- 
+                                //  Write the msg buffer to the write end of the pipe 
                                 if(write(write_fd, msg, strlen(msg)) == -1){
                                     perror("Failed to write to pipe");
                                     break;
                                 }
                                 messageNum++;
-
-                            ------------------------------------------------------------------------*/   
-                        }else{
+                        }
+                        //  Error handling if reading from terminal failed
+                        else{
                             perror("Fgets failed to read data from /dev/tty");
                             if(tty_fd) fclose(tty_fd);
                             break;
                         }
+                    //  Error handling if opening /dev/tty failed
                     }else{
                         perror("Failed to open /dev/tty properly");
                         exit(EXIT_FAILURE);
                     }
-                    //  Sleep for .5 seconds
-                    usleep(500000);
-                }   //  End of i==4 loop
+                }//  End of i==4 loop
 
-            }   //  End of while loop
+            }//  End of while loop
+
             //  Child process finished running. Close fd and exit
             close(write_fd);
             exit(0);
-        }//  Parent
+        }
+        //  Parent Process will close write end of pipe
         else{    
             pipes[i].pid = getpid();
             close(pipes[i].write_fd);
@@ -215,16 +232,92 @@ int main(){
 
     //  Step 3 - Parents reads data from the pipes
 
-    /*------------------------------------
-    
-            NEEDS TO BE IMPLEMENTED
-            
-            MUST USE SELECT()
-    
-    ------------------------------------*/
+    //  Set of file descriptors used in the select() call
+    fd_set read_fd, temp_read_fd;
+    FD_ZERO(&read_fd);
+    int largest_fd = 0;
 
+    //  Track how many pipes are still open for main while loop
+    int open_pipes = NUM_PROC;
 
-    
+    //  Structs to handle time values
+    struct timeval timeout;
+    timeResult timeRead;
+
+    //  Add every read pipe the parent has to the file descriptor set.
+    for(int i=0; i< NUM_PROC; i++){
+        FD_SET(pipes[i].read_fd, &read_fd);
+        //  Track largest fd value.  Required by the select() call
+        if(pipes[i].read_fd > largest_fd){
+            largest_fd = pipes[i].read_fd;
+        }
+    }
+
+    //  While there are still pipes open (child's write end)
+    while(open_pipes > 0){
+        //  Make a copy of the set because select() will edit it
+        temp_read_fd = read_fd;
+
+        //  Timeout value of 2.5 seconds
+        timeout.tv_sec = 2;
+        timeout.tv_usec = 500000;
+
+        //  Call select() to determine if any pipes have data on them ready to be read
+        int fd = select(largest_fd + 1, &temp_read_fd, NULL, NULL, &timeout);
+
+        //  Error handling: timeout
+        if(fd == 0){
+            std::cout<<"Timeout has occured.  Skipping this iteration"<<std::endl;
+            continue;
+        }
+
+        //  Error handling: select() call failed
+        if(fd == -1){
+            perror("Error with select system call: ");
+            exit(EXIT_FAILURE);
+        }
+
+        //  Select succeeded:  Search all pipes to determine which one is ready
+        for(int i=0; i<NUM_PROC; i++){
+            //  If this file descriptor is still in the set it has data to read
+            if(FD_ISSET(pipes[i].read_fd, &temp_read_fd)){
+
+                //  Clear buffer before reading as a saftey measure
+                memset(read_msg, 0, sizeof(read_msg));
+
+                //  Get current time (used by parent)
+                timeRead = getTimeValues(startTime);
+
+                //  Read message from the pipe
+                ssize_t numbytes = read(pipes[i].read_fd,read_msg,sizeof(read_msg));
+                
+
+                if(numbytes > 0){
+                    //  Slightly increase buffer to account for parent appending time to the message
+                    char readmsg[BUFFER_SIZE+32];
+
+                    //  Print the formatted message to the readmsg buffer
+                    snprintf(readmsg, sizeof(readmsg), "%s: %s",timeRead.formatted, read_msg);
+
+                    //  Output the message to the file output.txt
+                    fprintf(output,"%s\n",readmsg);
+
+                //  Write end of pipe was closed and there was no data left to read, so remove it from the file descriptor set.
+                }else if(numbytes == 0){
+                    FD_CLR(pipes[i].read_fd, &read_fd);
+                    open_pipes--;
+                }else{
+                    perror("Error when reading from pipe");
+                }
+            }
+        }
+    }
+
+    /*------------------------------
+                
+                Clean up       
+
+    ------------------------------*/
 
     //  Step 4 - Close remaining file descriptors
     for(int i=0; i<NUM_PROC; i++){
@@ -237,10 +330,10 @@ int main(){
         exit(EXIT_FAILURE);
     } 
 
+    //  Make parent wait for all other children to exit before parent exits. (added for saftey)
     for(int i=0; i<NUM_PROC; i++){
         waitpid(pids[i],NULL,0);
     }
 
     return 1;
-
 }

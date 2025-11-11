@@ -293,14 +293,36 @@ int main(){
                 
 
                 if(numbytes > 0){
-                    //  Slightly increase buffer to account for parent appending time to the message
-                    char readmsg[BUFFER_SIZE+32];
+                    //  Process buffer line by line to handle multiple messages
+                    char *line_start = read_msg;
+                    char *line_end;
 
-                    //  Print the formatted message to the readmsg buffer
-                    snprintf(readmsg, sizeof(readmsg), "%s: %s",timeRead.formatted, read_msg);
+                    while((line_end = strchr(line_start, '\n')) != NULL){
+                        //  Null-terminate this line
+                        *line_end = '\0';;
 
-                    //  Output the message to the file output.txt
-                    fprintf(output,"%s\n",readmsg);
+                        //  Skip empty lines
+                        if(strlen(line_start) > 0){
+                            //  Buffer to hold the timestamped message
+                            char readmsg[BUFFER_SIZE+32];
+            
+                            //  Prepend parent's timestamp to this message
+                            snprintf(readmsg, sizeof(readmsg), "%s: %s",timeRead.formatted, line_start);
+            
+                            //  Output the message to the file output.txt
+                            fprintf(output,"%s\n",readmsg);
+                        }
+                        //  Move to the next line
+                        line_start = line_end + 1;
+                    }
+
+                    //  Handle any remaining data without newline (partial message)
+                    if(strlen(line_start) > 0){
+                        char readmsg[BUFFER_SIZE+32];
+                        snprintf(readmsg, sizeof(readmsg), "%s: %s",timeRead.formatted, line_start);
+                        fprintf(output,"%s\n",readmsg);
+                    }
+                }
 
                 //  Write end of pipe was closed and there was no data left to read, so remove it from the file descriptor set.
                 }else if(numbytes == 0){

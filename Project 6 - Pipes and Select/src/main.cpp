@@ -10,7 +10,7 @@
 
 #define BUFFER_SIZE 128
 #define NUM_PROC 5
-#define TIMEOPEN 5
+#define TIMEOPEN 30
 
 //  Struct used to hold pipe and child process details
 struct pipeConnection{
@@ -157,7 +157,7 @@ int main(){
                 //  Process 0-3 sends simple message
                 if(i != 4){
                     //  Print the formatted message to the msg buffer
-                    snprintf(msg, sizeof(msg), "%s: Child %d message #%d\n",formattedTime, i, messageNum);
+                    snprintf(msg, sizeof(msg), "%s: Child %d: message #%d\n",formattedTime, i, messageNum);
 
                     //  Write the msg buffer to the write end of the pipe
                     if(write(write_fd, msg, strlen(msg)) == -1){
@@ -184,7 +184,7 @@ int main(){
                         char userInput[BUFFER_SIZE-56];
 
                         //  Prompt user to enter a string
-                        std::cout<<"Child 5: Please enter a string and press Enter: ";
+                        std::cout<<"Child 4: Please enter a string and press Enter: ";
 
                         //  If the input is successfully retrieved from terminal:
                         if(fgets(userInput, sizeof(userInput), tty_fd)){
@@ -194,7 +194,7 @@ int main(){
                                 userInput[length-1] = '\0';
                             }
                             //  Print the formatted message to the msg buffer
-                            snprintf(msg, sizeof(msg), "%s: Child %d:  %s\n",formattedTime, i, userInput);
+                            snprintf(msg, sizeof(msg), "%s: Child %d: %s\n",formattedTime, i, userInput);
 
                                 //  Write the msg buffer to the write end of the pipe 
                                 if(write(write_fd, msg, strlen(msg)) == -1){
@@ -322,7 +322,6 @@ int main(){
                         snprintf(readmsg, sizeof(readmsg), "%s: %s",timeRead.formatted, line_start);
                         fprintf(output,"%s\n",readmsg);
                     }
-                }
 
                 //  Write end of pipe was closed and there was no data left to read, so remove it from the file descriptor set.
                 }else if(numbytes == 0){
